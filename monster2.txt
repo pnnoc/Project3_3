@@ -1,0 +1,9 @@
+Stone Giant,4
+Night Hag,4
+Assassin,4
+Hydra,4
+Cloud Giant,5
+Silver Dragon,5
+Vampire,5
+Lich,5
+Sorcerer,6 

@@ -1,0 +1,224 @@
+Con: 50
+Palm: 50
+Zack: 50
+Josiah: 50
+Noah: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 33
+The treasures currently collected and held: 
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+1: 50
+2: 50
+3: 50
+4: 50
+5: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+q: 50
+w: 50
+e: 50
+r: 50
+t: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+p: 50
+o: 50
+i: 50
+u: 50
+y: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+z: 50
+x: 50
+c: 50
+v: 50
+b: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+a: 50
+s: 50
+d: 50
+f: 50
+g: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 21
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+a1: 50
+a2: 50
+a3: 50
+a4: 50
+a5: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 31
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+p: 50
+o: 50
+l: 50
+k: 50
+m: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+Palm: 50
+Zack: 50
+Noah: 50
+Hunter: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 31
+The treasures currently collected and held: 
+The number of explored spaces: 1
+The number of monsters defeated: 0
+The number of turns taken: 1
+
+Con: 48
+Palm: 49
+Zack: 0
+Josiah: 50
+Noah: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 31
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 4
+
+Con: 50
+Palm: 50
+Zack: 49
+Noah: 40
+Josiah: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 31
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 1
+
+Con: 50
+Palm: 50
+Zack: 50
+Josiah: 50
+Noah: 49
+The number of cleared room: 0
+The amount of remained Gold pieces: 31
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+Con: 24
+Palm: 34
+Zack: 34
+JS: 0
+Noah: 24
+The number of cleared room: 0
+The amount of remained Gold pieces: 56
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 33
+
+Con: 41
+Palm: 33
+Noah: 42
+Zack: 31
+Hunter: 43
+The number of cleared room: 0
+The amount of remained Gold pieces: 89
+The treasures currently collected and held: 
+The number of explored spaces: 6
+The number of monsters defeated: 5
+The number of turns taken: 5
+
+1: 50
+2: 50
+3: 50
+4: 50
+5: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 0
+
+Con001: 50
+Palm: 50
+Zack: 49
+Js: 49
+Hunter: 40
+The number of cleared room: 0
+The amount of remained Gold pieces: 9
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 2
+
+Con111: 49
+Palm: 40
+Zack: 49
+3: 48
+4: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 3
+
+Con111: 50
+l: 50
+e: 50
+vjme: 50
+f: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 1
+
+]: 50
+;: 50
+cv: 50
+ekv: 50
+a,: 50
+The number of cleared room: 0
+The amount of remained Gold pieces: 100
+The treasures currently collected and held: 
+The number of explored spaces: 0
+The number of monsters defeated: 0
+The number of turns taken: 1
+
