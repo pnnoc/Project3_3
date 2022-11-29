@@ -98,6 +98,7 @@ class Dungeon
 
 
         //other functions
+        bool isInputInteger(string);
         bool probability(int prob_percent); //to calculate whether the action is yes/no true/false
         bool yesorno(string yn); //for confirming buying
         bool isEndgame(); //including all the condition to check whether the game will end or not. used after each action or turn
