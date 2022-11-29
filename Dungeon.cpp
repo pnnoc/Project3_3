@@ -29,7 +29,6 @@ Dungeon::Dungeon()  //how to initialize
     {
         status_[i] = 0;
     }
-    num_player_=0;
     num_mons_=0;
     num_mons_defeated_=0;
     num_riddles_=0;
@@ -90,7 +89,7 @@ void Dungeon::start() //done, tested
         Player p(player_name);
         addPlayer(p); //using function thatt we have created instead of directly push_back
         //cout << num_player_ << endl;
-    } while (num_player_ < 5);
+    } while (getNumPlayer() < 5);
     partyUpdate();
 
     //populating items in party class
@@ -124,7 +123,6 @@ void Dungeon::start() //done, tested
 void Dungeon::addPlayer(Player player)
 {
     members_.push_back(player);
-    num_player_++;
 }
 Player Dungeon::getPlayerAt(int i)
 {
@@ -132,6 +130,7 @@ Player Dungeon::getPlayerAt(int i)
 }
 int Dungeon::getNumPlayer()
 {
+    num_player_ = members_.size();
     return num_player_;
 }
 void Dungeon::setFullnessAt(int player_index, int new_fullness)
@@ -146,13 +145,12 @@ int Dungeon::getFullnessAt(int player_index)
 }
 void Dungeon::removePlayer()
 {
-    for (int i=0; i< num_player_; i++)
+    for (int i=0; i < getNumPlayer(); i++)
     {
         if (getFullnessAt(i)<=0)
         {
             cout << "We're truly sorry. You've have lost " << getPlayerAt(i).getName() << endl;
             members_.erase(members_.begin()+i);
-            num_player_--;
         }
     }
     return;
@@ -635,7 +633,7 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
     //if not it's 0 by the definition (already initialized to 0 at the beginning)
 
     //outcome condition
-    int cal_outcome = ((r1*w)+d)-((r2*c)/a);
+    double cal_outcome = ((r1*w)+d)-((r2*c)/a);
     // cout <<"w " << w << endl;
     // cout <<"d " << d << endl;
     // cout <<"r1 " << r1 << endl;
@@ -772,12 +770,12 @@ int Dungeon::getNumExplored() //done but not tested
 void Dungeon::mainNormalSpace() //not done,
 {
     bool loop = true;
-    while(loop)
+    while(loop == true)
     {
         printNormalSpaceActions();
         int main_choice;
         string main;
-        cin >> main_choice;
+        cin >> main;
         // while (!(main_choice>=1 && main_choice<=5) || cin.fail())
         // {
         //     cin.clear(); 
@@ -1676,13 +1674,13 @@ void Dungeon::merchant_sell()
     cout << "How many would you like to sell? (Enter a positive integer, or 0 to cancel)" << endl; //this whole part is places outside of if causes becasue I dont want to write several times in those conditions
     int treasure_amount;
     string treasure;
-    cin >> treasure_amount;
+    cin >> treasure;
     bool isInputValid = false;
     while (!isInputValid) //this while loop is fucking important!!!!!!!
     {
         while (isInputInteger(treasure)==false)
         {
-            cout << "Please enter integer. or 0 to cancel" << endl;
+            cout << "Please enter integer or 0 to cancel" << endl;
             cin >> treasure;
         }
 
@@ -1697,7 +1695,7 @@ void Dungeon::merchant_sell()
         }
     }
 
-    treasure_amount=stoi(treasure);
+    treasure_amount = stoi(treasure);
     if(treasure_amount==0)
     {
         cout << "We are sad that you decided not to sell any treasure to us. What else can I get for you?" << endl;
@@ -1869,7 +1867,6 @@ void Dungeon::npc_speak()
     int riddle_index = rand()%getNumRiddle();
     string riddle_ans;
     cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
-    cout << getRiddleAt(riddle_index).getAnswer() << endl;
     cout << "What is the answer: ";
     cin >> riddle_ans;
     if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
@@ -2145,7 +2142,7 @@ void Dungeon::roomOpen()
     }
     else //getStatus(1)==0 (dont have a key) and win_puzzle==false (lost the puzzle)
     {
-        cout << "You have lost the puzzle and does not have a key! Please come back later!" << endl;
+        cout << "You have lost the puzzle and do not have a key! Please come back later!" << endl;
     }
     return;
 }
@@ -2204,7 +2201,7 @@ void Dungeon::misfortuneRoom() //done but not test
                 cout << "Good for you! You have no armor to be broken!" << endl;
                 return;
             }
-            cout << "OH NO! Your Armoe broke!" << endl;
+            cout << "OH NO! Your Armor broke!" << endl;
             setPartyArmor(getPartyArmor()-1);
         }   
     }
