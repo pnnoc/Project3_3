@@ -165,27 +165,27 @@ void Dungeon::removeWeapon() //need checking
         if (getPartyWeaponAt(rand_weapon)!=0)
         {
             setPartyWeaponAt(rand_weapon, getPartyWeaponAt(rand_weapon)-1);
-        }
-        
-        if(rand_weapon==0)
-        {
-            cout << "We are sorry. You lost a Stone Club!" << endl;
-        }
-        else if(rand_weapon==1)
-        {
-            cout << "We are sorry. You lost an Iron Spear!" << endl;
-        }
-        else if(rand_weapon==2)
-        {
-            cout << "We are sorry. You lost a (+1) Mythril Rapier!" << endl;
-        }
-        else if(rand_weapon==3)
-        {
-            cout << "We are sorry. You lost a (+2) Flaming Battle-Axe!" << endl;
-        }
-        else if(rand_weapon==4)
-        {
-            cout << "We are sorry. You lost a (+3) Vorpal Longsword!" << endl;
+
+            if(rand_weapon==0)
+            {
+                cout << "We are sorry. You lost a Stone Club!" << endl;
+            }
+            else if(rand_weapon==1)
+            {
+                cout << "We are sorry. You lost an Iron Spear!" << endl;
+            }
+            else if(rand_weapon==2)
+            {
+                cout << "We are sorry. You lost a (+1) Mythril Rapier!" << endl;
+            }
+            else if(rand_weapon==3)
+            {
+                cout << "We are sorry. You lost a (+2) Flaming Battle-Axe!" << endl;
+            }
+            else if(rand_weapon==4)
+            {
+                cout << "We are sorry. You lost a (+3) Vorpal Longsword!" << endl;
+            }
         }
     }
     return;
@@ -434,8 +434,19 @@ void Dungeon::setGiveup(bool giveup)
 {
     giveup_ = giveup;
 }
-
-
+bool Dungeon::isInputInteger(string input)
+{
+    bool isValid = true;
+    for (int i=0; i<input.length(); i++)
+    {
+        if (!isdigit(input[i]))
+        {
+            isValid = false;
+            break;
+        }
+    }
+    return isValid;
+}
 void Dungeon::inventoryUpdate() //done
 {
     cout << "INVENTORY | " << endl;
@@ -682,7 +693,10 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
                 bool isSlain = probability(5);
                 if(isSlain==true)
                 {
-                    setFullnessAt(i,0);
+                    //setFullnessAt(i,0);
+                    //or
+                    cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
+                    members_.erase(members_.begin()+i);
                 }
             }
             else //10% chance
@@ -690,11 +704,13 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
                 bool isSlain = probability(10);
                 if(isSlain==true)
                 {
-                    setFullnessAt(i,0);
+                    //setFullnessAt(i,0);
+                    cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
+                    members_.erase(members_.begin()+i);
                 }
             }
         }
-        removePlayer(); //this function will print out people you've lost (people who die from being slained rather than by hunger)
+        //removePlayer(); //this function will print out people you've lost (people who die from being slained rather than by hunger)
         removeWeapon(); //akways checks after losing player
     }
     return;
@@ -753,22 +769,45 @@ int Dungeon::getNumExplored() //done but not tested
     return num_explored;
 }
 
-void Dungeon::mainNormalSpace() //not done, pcikafightfunction
+void Dungeon::mainNormalSpace() //not done,
 {
     bool loop = true;
     while(loop)
     {
         printNormalSpaceActions();
         int main_choice;
+        string main;
         cin >> main_choice;
-        while (!(main_choice>=1 && main_choice<=5) || cin.fail())
+        // while (!(main_choice>=1 && main_choice<=5) || cin.fail())
+        // {
+        //     cin.clear(); 
+        //     cin.ignore(100,'\n'); //these two lines will prevent while from running infinite becasue of not inputing integer. 512 mean will clear 512 character of the input
+        //     printNormalSpaceActions();
+        //     cout << "Please enter number between 1 and 5" << endl;
+        //     cin >> main_choice;
+        // }
+
+        bool isInputValid = false;
+        while (!isInputValid) //this while loop is fucking important!!!!!!!
         {
-            cin.clear(); 
-            cin.ignore(100,'\n'); //these two lines will prevent while from running infinite becasue of not inputing integer. 512 mean will clear 512 character of the input
-            printNormalSpaceActions();
-            cout << "Please enter number between 1 and 5" << endl;
-            cin >> main_choice;
+            while (isInputInteger(main)==false)
+            {
+                cout << "Please enter integer." << endl;
+                cin >> main;
+            }
+
+            if (stoi(main)<1 || stoi(main)>5)
+            {
+                cout << "Please enter number between 1 and 5" << endl;
+                cin >> main;
+            }
+            else
+            {
+                isInputValid = true; //breaking the loop when the input is valid
+            }
         }
+
+        main_choice = stoi(main);
         switch (main_choice)
         {
             case 1: //done but not checked
@@ -819,7 +858,7 @@ void Dungeon::printNormalSpaceActions() //done
     cout << "1. Move" << endl << "2. Investigate" << endl << "3. Pick a fight" << endl << "4. Cook and Eat" << endl << "5. Give up" << endl;
     return;
 }
-void Dungeon::normalSpaceInvestigate() //making sure about position of removing player/die from hunger
+void Dungeon::normalSpaceInvestigate() // using members_erase for removeing immediatetly instead of remove function becasue this will prevent remove() from removing player whose fullness at 0 because of hunger
 {
     if(!(map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol()))) //if it's not explored
     {//dont forget to set this space to be explored at the end
@@ -885,7 +924,6 @@ void Dungeon::normalSpaceInvestigate() //making sure about position of removing 
             if (fight_surr == "1")
             {
                 fightingMonster();
-                //removePlayer();
             }
             else if (fight_surr=="2")
             {
@@ -893,8 +931,10 @@ void Dungeon::normalSpaceInvestigate() //making sure about position of removing 
                 //to lose one member that is not leader -> using rand() for finding the index that is not zero, setting their fullness to zero and use removePlayer
                 cout << "Monster is too strong! It's ok to surrender. You party will win next time!!!" << endl;
                 int index = rand()%(getNumPlayer()-1) + 1; //gonna give the range that exclude 0. For example, if num_player=5 -> rand()%4+1 will be 1-4.
-                setFullnessAt(index, 0);
-                removePlayer(); //remove here right away becasue it's not death by hunger but slained by the monster
+                //setFullnessAt(index, 0);
+                cout  << getPlayerAt(index).getName() << " has been held captive by the monster! You must continue without them!" << endl;
+                members_.erase(members_.begin()+index);
+                //removePlayer(); //remove here right away becasue it's not death by hunger but slained by the monster
                 removeWeapon();
             }
             //after facing monster -> 50% chance that all players' fullness decrease by 1
@@ -953,13 +993,33 @@ void Dungeon::normalSpaceCookeat() //done tested
     //prompting user to choose amount of ingredient
     cout << "You have " << getPartyIngredient() << " kg of ingredient. The ratio of successful cooking is 1 fullness: 5 kg." << endl << "How much do you want to cook?" << endl;
     int amount_ing;
-    cin >> amount_ing; //***probably gonna give an error when inputing wrong type of data type -> infinite loop for not int data type
-    while (!(amount_ing%5==0 && amount_ing <= getPartyIngredient()))
-    {
-        cout << "Please enter an integer that is multiple of 5, and make sure that you have enough ingredient to cook." << endl;
-        cin >> amount_ing;
-    }
+    string ing;
+    cin >> ing; //***probably gonna give an error when inputing wrong type of data type -> infinite loop for not int data type
+    // while (!(amount_ing%5==0 && amount_ing <= getPartyIngredient()))
+    // {
+    //     cout << "Please enter an integer that is multiple of 5, and make sure that you have enough ingredient to cook." << endl;
+    //     cin >> amount_ing;
+    // }
+    bool isInputValid = false;
+        while (!isInputValid) //this while loop is fucking important!!!!!!!
+        {
+            while (isInputInteger(ing)==false)
+            {
+                cout << "Please enter integer." << endl;
+                cin >> ing;
+            }
 
+            if (!(stoi(ing)%5==0 && stoi(ing) <= getPartyIngredient()))
+            {
+                cout << "Please enter an integer that is multiple of 5, and make sure that you have enough ingredient to cook." << endl;
+                cin >> ing;
+            }
+            else
+            {
+                isInputValid = true; //breaking the loop when the input is valid
+            }
+        }
+    amount_ing = stoi(ing);
     if(amount_ing==0)
     {
         cout << "We are sorry you don't want to cook any food." << endl;
@@ -1163,22 +1223,33 @@ void Dungeon::merchant_ingredient()
     int ingredient_price = (getPartyIngredientPrice()*(1+(getStatusAt(0)*0.25))); //getStatusAt(0) gives the number of room cleared
     cout << "I see that you need ingredients! How many kg of ingredients do you need? It's " << ingredient_price << " Gold/kg." << endl;
     cout << "(Enter a positive mulitple of 5, or 0 to cancel)" << endl;
+    string ingre;
+    cin >> ingre;
+
+    //while making sure that the input is the integer
+    //while mnaking sure that the integer is positive multiple of 5
+    bool isInputValid = false;
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    {
+        while (isInputInteger(ingre)==false)
+        {
+            cout << "Please enter integer." << endl;
+            cin >> ingre;
+        }
+
+        if (!(stoi(ingre)%5 == 0 && stoi(ingre) >= 0))
+        {
+            cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
+            cin >> ingre;
+        }
+        else
+        {
+            isInputValid = true; //breaking the loop when the input is valid
+        }
+    } //pssing this while loop will make sure that the input is string of integer that is 0 or multiple of 5
+
     int ingre_amount;
-    cin >> ingre_amount;
-    while (!(ingre_amount%5 == 0 && ingre_amount >= 0) || cin.fail()) //validation check, input has to be positive integer 
-    {//error when input 5tggg -> char after will be used when inputing y/n
-    //for example 10tttttty will read 10 and then will read y = ues for confirming buying
-        cin.clear();
-        cin.ignore(100,'\n');
-        cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
-        cin >> ingre_amount;
-    }
-
-    //using string as an input instead of int (trying to avoid an error)
-    // string ingre_amount;
-    // cin >> ingre_amount;
-    // while(stoi(ingre_amount))
-
+    ingre_amount = stoi(ingre); //changing the string into the int
     if (ingre_amount==0)
     {
         cout << "We are sad that you decided not to buy any ingredient from us. What else can I get for you?" << endl;
@@ -1206,7 +1277,7 @@ void Dungeon::merchant_ingredient()
     }
     return;
 }
-void Dungeon::merchant_cookware() //inputValidation needs to be checked
+void Dungeon::merchant_cookware()
 {
     //setStatusAt(0, 4); // for testing
     // for (int i=0; i<3; i++) //setting 
@@ -1225,7 +1296,7 @@ void Dungeon::merchant_cookware() //inputValidation needs to be checked
     cout << "4. Cancel" << endl;
     string cw_type;
     cin >> cw_type;
-    while (!(cw_type == "1" || cw_type == "2" || cw_type == "3" || cw_type == "4"))
+    while (!(cw_type == "1" || cw_type == "2" || cw_type == "3" || cw_type == "4")) //connsider the length becasue it gives error for white space -> does nto work
     {
         cout << "Please enter number between 1-4" << endl;
         cin >> cw_type;
@@ -1239,16 +1310,31 @@ void Dungeon::merchant_cookware() //inputValidation needs to be checked
     }
 
     cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl; //this whole part is places outside of if causes becasue I dont want to write several times in those conditions
-    int cook_amount;
-    cin >> cook_amount;
-    while (cook_amount < 0 || cin.fail()) //for input 10sdjlvnsdjnvn -> it reads 10
-    {//10y -> read 10 and y = yes confirming the purchase later but 1hy read only 1
-        cin.clear();
-        cin.ignore(100,'\n');
-        cout << "Please enter a positive integer, or 0 to cancel" << endl;
-        cin >> cook_amount;
+    string cook;
+    cin >> cook;
+
+    bool isInputValid = false;
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    {
+        while (isInputInteger(cook)==false)
+        {
+            cout << "Please enter integer. or 0 to cencel" << endl;
+            cin >> cook;
+        }
+
+        if (!(stoi(cook) >= 0))
+        {
+            cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
+            cin >> cook;
+        }
+        else
+        {
+            isInputValid = true; //breaking the loop when the input is valid
+        }
     }
 
+    int cook_amount;
+    cook_amount=stoi(cook);
     if(cook_amount==0)
     {
         cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
@@ -1317,7 +1403,7 @@ void Dungeon::merchant_cookware() //inputValidation needs to be checked
     }
     return;
 }
-void Dungeon::merchant_weapon() //have to work on the condition of removing weapon to upgrade the weapon -> is it requireed by the game? ***inputValidation needs to be checked
+void Dungeon::merchant_weapon() //have to work on the condition of removing weapon to upgrade the weapon -> is it requireed by the game?
 {
     if (getNumWeapon()>=getNumPlayer())
     {
@@ -1358,19 +1444,34 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
     }
 
     cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl; //this whole part is places outside of if causes becasue I dont want to write several times in those conditions
-    int weapon_amount;
-    cin >> weapon_amount;
+    string weapon;
+    cin >> weapon;
 
-    while (weapon_amount < 0 || weapon_amount > (5-getNumWeapon()) || cin.fail()) //for input 10sdjlvnsdjnvn -> it reads 10
-    {//10y -> read 10 and y = yes confirming the purchase later
-        cin.clear();
-        cin.ignore(100,'\n');
-        cout << "Please enter a positive integer, or 0 to cancel" << endl;
-        cout << "Note that you can only buy up to " << 5-getNumWeapon() << "  weapons becasue of limited capacity!" << endl;
-        cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl;
-        cin >> weapon_amount;
+    bool isInputValid = false;
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    {
+        while (isInputInteger(weapon)==false)
+        {
+            cout << "Please enter integer. or 0 to cancel" << endl;
+            cin >> weapon;
+        }
+
+        if (stoi(weapon)<0 || stoi(weapon) > (5-getNumWeapon()))
+        {
+            cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
+            cout << "Please enter a positive integer, or 0 to cancel" << endl;
+            cout << "Note that you can only buy up to " << 5-getNumWeapon() << "  weapons becasue of limited capacity!" << endl;
+            cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl;
+            cin >> weapon;
+        }
+        else
+        {
+            isInputValid = true; //breaking the loop when the input is valid
+        }
     }
 
+    int weapon_amount;
+    weapon_amount = stoi(weapon);
     if(weapon_amount==0)
     {
         cout << "We are sad that you decided not to buy any weapon from us. What else can I get for you?" << endl;
@@ -1477,23 +1578,36 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
     inventoryUpdate();
     return;
 }
-void Dungeon::merchant_armor() //inputValidation needs to be check
+void Dungeon::merchant_armor()
 {
     //setStatusAt(0,4); //setting rooms cleared to be 2 for testing
     int armor_price = (getPartyArmorPrice()*(1+(getStatusAt(0)*0.25))); //getStatusAt(0) gives the number of room cleared
     cout << "I see that you need Armor suit! How many suits of armor can I get you? It's " << armor_price << " Gold/suit." << endl;
     cout << "(Enter a positive integer, or 0 to cancel)" << endl;
     int armor_amount;
-    cin >> armor_amount;
-    while (!(armor_amount>=0) || cin.fail()) //validation check, input has to be positive integer 
-    {//error when input 5tggg -> char after will be used when inputing y/n
-    //for example 10tttttty will read 10 and then will read y = ues for confirming buying
-        cin.clear();
-        cin.ignore(100,'\n');
-        cout << "Please enter a positive integer, or 0 to cancel" << endl;
-        cin >> armor_amount;
+    string armor;
+    cin >> armor;
+    bool isInputValid = false;
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    {
+        while (isInputInteger(armor)==false)
+        {
+            cout << "Please enter integer. or 0 to cancel" << endl;
+            cin >> armor;
+        }
+
+        if (stoi(armor)<0)
+        {
+            cout << "Please enter a positive integer, or 0 to cancel" << endl;
+            cin >> armor;
+        }
+        else
+        {
+            isInputValid = true; //breaking the loop when the input is valid
+        }
     }
 
+    armor_amount = stoi(armor);
     if (armor_amount==0)
     {
         cout << "We are sad that you decided not to buy any armor from us. What else can I get for you?" << endl;
@@ -1522,7 +1636,7 @@ void Dungeon::merchant_armor() //inputValidation needs to be check
     inventoryUpdate();
     return;
 }
-void Dungeon::merchant_sell() //inputValidation needs to be checked
+void Dungeon::merchant_sell()
 {
     int num_treasures_total=0;
     for (int i=0; i<5;i++) // to calculate the total number of weapons currently held by the party
@@ -1561,15 +1675,29 @@ void Dungeon::merchant_sell() //inputValidation needs to be checked
 
     cout << "How many would you like to sell? (Enter a positive integer, or 0 to cancel)" << endl; //this whole part is places outside of if causes becasue I dont want to write several times in those conditions
     int treasure_amount;
+    string treasure;
     cin >> treasure_amount;
-    while (treasure_amount < 0 || cin.fail()) //for input 10sdjlvnsdjnvn -> it reads 10
-    {//10y -> read 10 and y = yes confirming the purchase later
-        cin.clear();
-        cin.ignore(100,'\n');
-        cout << "Please enter a positive integer, or 0 to cancel" << endl;
-        cin >> treasure_amount;
+    bool isInputValid = false;
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    {
+        while (isInputInteger(treasure)==false)
+        {
+            cout << "Please enter integer. or 0 to cancel" << endl;
+            cin >> treasure;
+        }
+
+        if (stoi(treasure)<0)
+        {
+            cout << "Please enter a positive integer, or 0 to cancel" << endl;
+            cin >> treasure;
+        }
+        else
+        {
+            isInputValid = true; //breaking the loop when the input is valid
+        }
     }
 
+    treasure_amount=stoi(treasure);
     if(treasure_amount==0)
     {
         cout << "We are sad that you decided not to sell any treasure to us. What else can I get for you?" << endl;
@@ -1704,7 +1832,7 @@ void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub fun
                     cout << getPlayerAt(i).getName() << "'s fullness has dropped by 1." << endl;
                 }
             }
-            loop = false; // to break the loop and the move action will occur at the new while loop in mainGame
+            loop = false; // to break the loop and the move action will occur
         }
         else if(action=="2")
         {
@@ -1727,10 +1855,11 @@ void Dungeon::printNPCAction()
     cout << "1. Move" << endl << "2. Speak to NPC" << endl << "3. Give up" << endl;
     return;
 }
-void Dungeon::npc_speak() //***checking the condition of isExplored
+void Dungeon::npc_speak()
 {
     //cannot talk to NPC twice
-    if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol())) //***have to check this isExplored function because NPC is set to be found when entering the space eventhough haven't talked to them
+    if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == ' ')
+    //if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol())) //***have to check this isExplored function because NPC is set to be found when entering the space eventhough haven't talked to them
     {
         cout << "You have already talked to a NPC! Please choose another option" << endl; 
         return;
@@ -1775,7 +1904,6 @@ void Dungeon::npc_speak() //***checking the condition of isExplored
     //map_.exploreSpace(map_.getPlayerRow(), map_.getPlayerCol()); //setting the space to be explored
     //space will change from an NPC space to a normal space which is marked as "explored".
     return;
-
 }
 
 void Dungeon::mainRoom() // done but not test
@@ -2027,7 +2155,6 @@ void Dungeon::misfortuneRoom() //done but not test
     int random = rand()%10+1;
     if (random == 1) //losing random weapon or armor
     {
-
         int rand1 = rand()%2;
         if (rand1 == 0) //losing weapon
         {
@@ -2176,7 +2303,8 @@ void Dungeon::misfortuneRoom() //done but not test
         int player_index = rand()%(getNumPlayer()-1) + 1;
         cout << "OH NO! Your teammate " << getPlayerAt(player_index).getName() << " is trapped in the previous room and is unable to get through. You must continue without them." << endl;
         //cout << "Your party size has reduced to " << getNumPlayer()-1 << " members." << endl; //in case of not suddenly remove the player out of the team
-        removePlayer(); //another case of suddenly being removed
+        members_.erase(members_.begin()+player_index);
+        //removePlayer(); //another case of suddenly being removed
         cout << "Your party size has reduced to " << getNumPlayer() << " members." << endl;
 
         //size is not enough (leader+1 member)
