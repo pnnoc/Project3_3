@@ -11,7 +11,6 @@
 #include <string>
 #include <cctype> //to use toupper()
 #include "Dungeon.h"
-
 #include <ctime> //where do we have to add these three
 #include <cstdlib>
 #include <math.h>
@@ -20,11 +19,11 @@ using namespace std;
 
 Dungeon::Dungeon()  //how to initialize
 {
-    members_; //does not seem to be problem
-    party_; //indlucing party, cookware array, treasure array, gold, ingredient, armor
-    mons_; //vector size 0 (note sure if it can be initialized in this way)
-    riddles_; //vector size 0 (note sure if it can be initialized in this way)
-    map_;
+    // members_; //does not seem to be problem
+    // party_; //indlucing party, cookware array, treasure array, gold, ingredient, armor
+    // mons_; //vector size 0 (note sure if it can be initialized in this way)
+    // riddles_; //vector size 0 (note sure if it can be initialized in this way)
+    // map_;
     for (int i=0; i< 4; i++)
     {
         status_[i] = 0;
@@ -36,26 +35,7 @@ Dungeon::Dungeon()  //how to initialize
     giveup_=false;
 
 }
-// Dungeon:: Dungeon(Party party)
-// {
-//     party_ = party;
-//     mons_;
-//     map_;
-//     riddles_;
-//     for (int i=0; i< 4; i++)
-//     {
-//         status_[i] = 0;
-//     }
 
-// }
-// Dungeon::Dungeon(Party party, vector<Monster> mons)
-// {
-//     party_ = party;
-//     mons_ = mons;
-//     map_;
-//     riddles_;
-//     turn_ = 0;
-// }
 
 //starting the game
 void Dungeon::start() //done, tested
@@ -195,6 +175,14 @@ void Dungeon::removeWeapon() //need checking
                 cout << "We are sorry. You lost a (+3) Vorpal Longsword!" << endl;
             }
         }
+    }
+    return;
+}
+void Dungeon::removeArmor()
+{
+    if (getPartyArmor() > getNumPlayer())
+    {
+        setPartyArmor(getNumPlayer());
     }
     return;
 }
@@ -706,7 +694,9 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
                 {
                     cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                     members_.erase(members_.begin()+i);
+                    removeWeapon();
                     setNumPlayer(); //just in case that of using getNumPlayer later
+                    removeArmor();
                 }
             }
             else //10% chance
@@ -716,7 +706,9 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
                 {
                     cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                     members_.erase(members_.begin()+i);
+                    removeWeapon();
                     setNumPlayer(); //just in case that of using getNumPlayer later
+                    removeArmor();
                 }
             }
         }
@@ -751,7 +743,7 @@ bool Dungeon::hungerWarning() //this one has to be at the beginning of each turn
     bool isWarning = false;
     for (int i=0; i<getNumPlayer(); i++)
     {
-        if (getFullnessAt(i)==0)
+        if (getFullnessAt(i)<=1)
         {
             cout << "Warning: " << getPlayerAt(i).getName() << " is on the blink of starvation!" << endl << "You should cook and eat some food!" << endl;
             isWarning = true;
@@ -778,6 +770,313 @@ int Dungeon::getNumExplored() //done but not tested
     }
     return num_explored;
 }
+void Dungeon::fightingSorcerer() //not done
+{
+    cout << "You have come to the last boss SORCERER!!! This battle will determine the fate of your party!!!" << endl;
+    cout << endl;
+
+    //giving the desription of fighting sorceror
+    cout << "Sorcerer is stronger than normal monsters you have fought. Sorcerer has fullness at 150 which is separated into 3 phases, 50 each." << endl;
+    cout << "Sorcerer will be angrier and more difficult to defeat each phase you have entered!" << endl;
+    cout << endl;
+    //getting pet monster to be part of your team (same as player)
+    if (getNumPlayer()<3)
+    {
+        cout << "Lucky for you! You have found a monster pet (Vega) that can help you fight the sorcerer!" << endl << "However, to catch them, you have to convince and answer their question!" << endl;
+        int riddle_index = rand()%getNumRiddle();
+        string riddle_ans;
+        cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
+        cout << "What is the answer: ";
+        cin >> riddle_ans;
+        cout << endl;
+        if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
+        {
+            cout << "You have got the corrected answer! Vega is willing to help you fight and be part of your team!" << endl;
+            cout << endl;
+            Player mon_pet("Vega");
+            addPlayer(mon_pet);
+            partyUpdate();
+            cout << endl;
+        }
+        else
+        {
+            cout << "You have got the wrong answer? You have lost Vega!!!" << endl;
+        }
+        //moving the riddle out opf the vector
+        removeRiddleAt(riddle_index);
+        setNumRiddle(); // just in case
+    }
+
+    cout << "You have one last chance to prepare you team for this legend battle! Let's gather items needed from the merchant!" << endl;
+    mainMerchant();
+    cout << endl;
+
+    int sorcerer_fullness = 150;
+    while (sorcerer_fullness>0 && getNumPlayer()>1 && getFullnessAt(0)>0)
+    {
+        if (sorcerer_fullness>=100) //phase 1
+        {
+            cout << "Phase 1" << endl;
+            //calculating attacking score for the party
+            int damage = attackingScore();
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
+            sorcerer_fullness -= damage;
+            cout << endl;
+            //probability of attack again
+            if (probability(30))
+            {
+                cout << "You got luck and can do double attack!!!" << endl;
+                int double_damage = attackingScore();
+                cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
+                sorcerer_fullness -= double_damage;
+            }
+            cout << endl;
+
+            //calculating damage doe by sorceror to the party
+            int rand_damage = rand()%3+1; //specific to this phase (1-3)
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << endl;
+            for (int i=0; i<getNumPlayer(); i++)
+            {
+                if (getFullnessAt(i)>rand_damage)
+                {
+                    setFullnessAt(i,getFullnessAt(i)-rand_damage);
+                }
+                else
+                {
+                    setFullnessAt(i,0);
+                }
+            }
+
+            //findingn portion for increasing fullness
+            if(probability(10))
+            {
+                int rand_healing = rand()%3+1;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
+                for (int i=0; i<getNumPlayer(); i++)
+                {
+                    setFullnessAt(i, getFullnessAt(i)+rand_healing);
+                }
+            }
+        }
+        else if (sorcerer_fullness>=50) // phase2
+        {
+            cout << "Phase 2" << endl;
+            //calculating attacking score for the party
+            int damage = attackingScore();
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
+            sorcerer_fullness -= damage;
+    
+            cout << endl;
+            //probability of attack again
+            if (probability(25) && sorcerer_fullness!=0)
+            {
+                cout << "You got luck and can do double attack!!!" << endl;
+                int double_damage = attackingScore();
+                cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
+                sorcerer_fullness -= double_damage;
+            }
+            cout << endl;
+
+            //calculating damage doe by sorceror to the party
+            int rand_damage = rand()%3+3; //specific to this phase (3-5)
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << endl;
+            for (int i=0; i<getNumPlayer(); i++)
+            {
+                if (getFullnessAt(i)>rand_damage)
+                {
+                    setFullnessAt(i,getFullnessAt(i)-rand_damage);
+                }
+                else
+                {
+                    setFullnessAt(i,0);
+                }
+            }
+
+            //findingn portion for increasing fullness
+            if(probability(20))
+            {
+                int rand_healing = rand()%3+1;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
+                for (int i=0; i<getNumPlayer(); i++)
+                {
+                    setFullnessAt(i, getFullnessAt(i)+rand_healing);
+                }
+            }
+        }
+        else if (sorcerer_fullness>=0) //phase 3
+        {
+            cout << "Phase 3" << endl;
+            //calculating attacking score for the party
+            int damage = attackingScore();
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
+            if(sorcerer_fullness>damage)
+            {
+                sorcerer_fullness -= damage;
+            }
+            else
+            {
+                sorcerer_fullness = 0;
+                break;
+            }
+
+            cout << endl;
+            //probability of attack again
+            if (probability(20))
+            {
+                cout << "You got luck and can do double attack!!!" << endl;
+                int double_damage = attackingScore();
+                cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
+                if(sorcerer_fullness>double_damage)
+                {
+                    sorcerer_fullness -= double_damage;
+                }
+                else
+                {
+                    sorcerer_fullness = 0;
+                    break;
+                }
+            }
+            cout << endl;
+
+            //calculating damage doe by sorceror to the party
+            int rand_damage = rand()%3+5; //specific to this phase (5-7)
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << endl;
+            for (int i=0; i<getNumPlayer(); i++)
+            {
+                if (getFullnessAt(i)>rand_damage)
+                {
+                    setFullnessAt(i,getFullnessAt(i)-rand_damage);
+                }
+                else
+                {
+                    setFullnessAt(i,0);
+                }
+            }
+
+            //findingn portion for increasing fullness
+            if(probability(30))
+            {
+                int rand_healing = rand()%3+1;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
+                for (int i=0; i<getNumPlayer(); i++)
+                {
+                    setFullnessAt(i, getFullnessAt(i)+rand_healing);
+                }
+            }
+        }
+
+        if (getFullnessAt(0)<=0) //leader fullness reaches 0
+        {
+            cout << "You have lost the party leader. The game is over!!!" << endl;
+            setGiveup(true);
+            cout << endl;
+            return;
+        }
+
+        for (int i=0; i<getNumPlayer(); i++)
+        {
+            if (getFullnessAt(i)<=0)
+            {
+                cout << "You have lost " << getPlayerAt(i).getName() << " after the battle." << endl;
+                members_.erase(members_.begin()+i);
+                removeWeapon();
+                setNumPlayer();
+                removeArmor();
+            }
+        }
+        //party / sorcerer update
+        partyUpdate();
+        cout << "Sorcerer: " << sorcerer_fullness << endl;
+        cout << endl;
+    }
+
+    //finding sorcerer index in the vector
+    int sorcerer_index;
+    for (int i=0; i<getNumMonster(); i++)
+    {
+        if (getMonsterAt(i).getLevel()==6)
+        {
+            sorcerer_index = i;
+            break;
+        }
+    }
+
+    if (sorcerer_fullness>0 || getFullnessAt(0)==0 || getNumPlayer()<2) //meaning that the party has lost
+    {
+        //not removing monster
+        //NOTE not adding number of defeated monstes
+        cout << "The Socerer is too strong! You've lost the fight." << endl;
+        //losing gold
+        cout << endl;
+        int gold_remained = getPartyGold()*0.75;
+        setPartyGold(gold_remained);
+        cout << "You lost some gold " << getPartyGold() << " golds are remained." << endl;
+        //losing ingredient
+        if (getPartyIngredient()<=30) //losing ingredient up to 30. This means that having less than 30 will have 0 remained
+        {
+            cout << "You have lost all the ingredient." << endl;
+            setPartyIngredient(0);
+        }
+        else
+        {
+            cout << "You have lost 30 ingredients" << endl;
+            setPartyIngredient(getPartyIngredient()-30); //having more than 30 will be substracted by 30
+        }
+    }
+    else
+    {
+        int c =6; //level of sorcerer
+        cout << "You have defeated the sorcerer! It's time to head out for the dungeon exist!" << endl;
+        removeMonsterAt(sorcerer_index); //*****
+        setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
+        //cout << "Number of monsters: "<< getNumMonster() << endl;
+        //cout << "Number of monsters defeated: " << getNumDefeatedMonster() << endl;
+        setNumDefeatedMonster(getNumDefeatedMonster()+1);
+        //party_.setGold(party_.getGold()+(10*c));
+        setPartyGold(getPartyGold() + (10*c));
+        cout << "You recieve " << 10*c << " golds as a prize!" << " (" << getPartyGold() << " in total)" << endl;
+        //party_.setIngredient(party_.getIngredient())
+        setPartyIngredient(getPartyIngredient() + (5*c));
+        cout << "You recieve " << 5*c << " ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
+    }
+    
+    cout << endl;
+    return;
+}
+int Dungeon::attackingScore()
+{
+    //fighting calculation
+    int w = getNumWeapon() + getPartyWeaponAt(2) + 2*(getPartyWeaponAt(3)) + 3*(getPartyWeaponAt(4));
+    int d=0;
+    int r1 = rand()%6 + 1; //1-6
+    int r2 = rand()%6 + 1;
+    int c = 6;
+    int a = getPartyArmor();
+
+    //caldulating d is a problem (not sure if below code will correct -> logically)
+    bool unique_weapon = true;
+    for (int i=0; i<5; i++) //max num of weapon type = 5. Depending on the number of player 5 players have 5 different weapons, similary, 3 players must have 3 different weapons
+    {//meaning that the number of weapon for each type has to be one for the party to have unique weapon
+        if (getPartyWeaponAt(i) >1)
+        {
+            unique_weapon = false;
+            break; //will this break out of the for loop
+        }
+    }
+    if (unique_weapon==true && getNumPlayer()==getNumWeapon())
+    {
+        d=4;
+    }
+    //if not it's 0 by the definition (already initialized to 0 at the beginning)
+
+    //outcome condition
+    int cal_outcome = ((r1*w)+d)-((r2*c)/a);
+    return cal_outcome;
+}
+
 
 void Dungeon::mainNormalSpace() //not done,
 {
@@ -944,6 +1243,7 @@ void Dungeon::normalSpaceInvestigate() // using members_erase for removeing imme
                 setNumPlayer(); //just in case that of using getNumPlayer later
                 //removePlayer(); //remove here right away becasue it's not death by hunger but slained by the monster
                 removeWeapon();
+                removeArmor();
             }
             //after facing monster -> 50% chance that all players' fullness decrease by 1
             bool isFullnessDecrease = probability(50);
@@ -1282,6 +1582,7 @@ void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> n
                     cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                     members_.erase(members_.begin()+i);
                     setNumPlayer(); //just in case that of using getNumPlayer later
+                    removeArmor();
                 }
             }
             else //10% chance
@@ -1291,7 +1592,9 @@ void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> n
                 {
                     cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                     members_.erase(members_.begin()+i);
+                    removeWeapon();
                     setNumPlayer(); //just in case that of using getNumPlayer later
+                    removeArmor();
                 }
             }
         }
@@ -1595,7 +1898,7 @@ void Dungeon::merchant_cookware()
     cout << endl;
     return;
 }
-void Dungeon::merchant_weapon() //have to work on the condition of removing weapon to upgrade the weapon -> is it requireed by the game?
+void Dungeon::merchant_weapon()
 {
     if (getNumWeapon()>=getNumPlayer())
     {
@@ -1632,7 +1935,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
     cout << endl;
     if (weapon_type == "6")
     {
-        cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
+        cout << "We are sad that you decided not to buy any weapon from us. What else can I get for you?" << endl;
         //inventoryUpdate();
         cout << endl;
         return;
@@ -1797,9 +2100,16 @@ void Dungeon::merchant_armor()
             cin >> armor;
         }
 
-        if (stoi(armor)<0)
+        // if (stoi(armor)<0)
+        // {
+        //     cout << "Please enter a positive integer, or 0 to cancel" << endl;
+        //     cin >> armor;
+        // }
+        if (stoi(armor)<0 || stoi(armor) > (getNumPlayer()-getPartyArmor()))
         {
             cout << "Please enter a positive integer, or 0 to cancel" << endl;
+            cout << "Note that you can only buy up to " << getNumPlayer()-getPartyArmor() << "  weapons becasue of limited capacity!" << endl;
+            cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl;
             cin >> armor;
         }
         else
@@ -1807,6 +2117,7 @@ void Dungeon::merchant_armor()
             isInputValid = true; //breaking the loop when the input is valid
         }
     }
+    
     cout << endl;
     armor_amount = stoi(armor);
     if (armor_amount==0)
@@ -1883,7 +2194,7 @@ void Dungeon::merchant_sell()
     cout << "How many would you like to sell? (Enter a positive integer, or 0 to cancel)" << endl; //this whole part is places outside of if causes becasue I dont want to write several times in those conditions
     int treasure_amount;
     string treasure;
-    cin >> treasure_amount;
+    cin >> treasure;
     bool isInputValid = false;
     while (!isInputValid) //this while loop is fucking important!!!!!!!
     {
@@ -1904,7 +2215,7 @@ void Dungeon::merchant_sell()
         }
     }
     cout << endl;
-    treasure_amount=stoi(treasure);
+    treasure_amount = stoi(treasure);
     if(treasure_amount==0)
     {
         cout << "We are sad that you decided not to sell any treasure to us. What else can I get for you?" << endl;
@@ -2235,6 +2546,8 @@ void Dungeon::roomOpen()
                 cout << "You have lost " << getPlayerAt(player_index).getName() << endl;
                 members_.erase(members_.begin()+player_index);
                 setNumPlayer(); //just in case that of using getNumPlayer later
+                removeWeapon();
+                removeArmor();
                 loop = false;
             }
         }
@@ -2260,8 +2573,8 @@ void Dungeon::roomOpen()
     }
 
     //fightign monster (different than the normal fighting becasue the level is different + there is a misfortune)
-    if (win_puzzle==true || getStatusAt(1)>0) // 1. dont have key to have to solve the puzzle, if win -> fall in this condition (but getStatus=0) 2. Do have a key, so win_puzzle==false but getStatus(1)>0
-    {//has openned the room. R -> EXPLORED
+    if ((win_puzzle==true || getStatusAt(1)>0) && getStatusAt(0)<4) // 1. dont have key to have to solve the puzzle, if win -> fall in this condition (but getStatus=0) 2. Do have a key, so win_puzzle==false but getStatus(1)>0
+    {
 
         int mon_level = getStatusAt(0)+2; //mon_level = 1 fightign before clearing room 1,.., thus clearing 5 rooms will get mon_level = 6 which is the sorceror
         //cout << mon_level << endl;
@@ -2339,7 +2652,6 @@ void Dungeon::roomOpen()
             {
                 misfortuneRoom();
             }
-            
         }
         else
         {//losing the monster
@@ -2373,6 +2685,7 @@ void Dungeon::roomOpen()
                         cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                         members_.erase(members_.begin()+i);
                         setNumPlayer(); //just in case that of using getNumPlayer later
+                        removeArmor();
                     }
                 }
                 else //10% chance
@@ -2382,7 +2695,9 @@ void Dungeon::roomOpen()
                     {
                         cout << getPlayerAt(i).getName() << " was killed by the monster!" << endl;
                         members_.erase(members_.begin()+i);
+                        removeWeapon();
                         setNumPlayer(); //just in case that of using getNumPlayer later
+                        removeArmor();
                     }
                 }
             }
@@ -2404,6 +2719,10 @@ void Dungeon::roomOpen()
         map_.removeRoom(map_.getPlayerRow(),map_.getPlayerCol());
         //setting the number of room openned(cleared)
         setStatusAt(0, getStatusAt(0)+1);
+    }
+    else if ((win_puzzle==true || getStatusAt(1)>0) && getStatusAt(0)>=4)
+    {
+        fightingSorcerer();
     }
     else //getStatus(1)==0 (dont have a key) and win_puzzle==false (lost the puzzle)
     {
@@ -2548,11 +2867,14 @@ void Dungeon::misfortuneRoom() //done but not test
             {
                 cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
                 members_.erase(members_.begin()+player_index);
+                removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
+                removeArmor();
             }
             else
             {
                 cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
+                setFullnessAt(0,0);
                 setGiveup(true);
                 return;
             }
@@ -2571,7 +2893,9 @@ void Dungeon::misfortuneRoom() //done but not test
         int player_index = rand()%(getNumPlayer()-1) + 1;
         cout << "OH NO! Your teammate " << getPlayerAt(player_index).getName() << " is trapped in the previous room and is unable to get through. You must continue without them." << endl;
         members_.erase(members_.begin()+player_index);
+        removeWeapon();
         setNumPlayer(); //just in case that of using getNumPlayer later
+        removeArmor();
         cout << "Your party size has reduced to " << getNumPlayer() << " members." << endl;
 
         //size is not enough (leader+1 member)
@@ -2719,12 +3043,15 @@ void Dungeon::misfortuneNormal() //done but not tested
             if (player_index!=0) //not the leader
             {
                 members_.erase(members_.begin()+player_index);
+                removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
+                removeArmor();
                 cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
             }
             else
             {
                 cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
+                setFullnessAt(0, 0);
                 setGiveup(true);
                 return;
             }
@@ -2797,7 +3124,9 @@ void Dungeon::mainGame()
                     {
                         cout << "OH NO! " << getPlayerAt(i).getName() << " has died from hunger!" << endl;
                         members_.erase(members_.begin()+i);
+                        removeWeapon();
                         setNumPlayer(); //just in case that of using getNumPlayer later
+                        removeArmor();
                         cout << "Your party size has reduced to " << getNumPlayer() << " members." << endl;
                     }
                 }
@@ -2815,7 +3144,9 @@ void Dungeon::mainGame()
                     {
                         cout << "OH NO! " << getPlayerAt(i).getName() << " has died from hunger!" << endl;
                         members_.erase(members_.begin()+i);
+                        removeWeapon();
                         setNumPlayer(); //just in case that of using getNumPlayer later
+                        removeArmor();
                         cout << "Your party size has reduced to " << getNumPlayer() << " members." << endl;
                     }
                 }

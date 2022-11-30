@@ -34,6 +34,7 @@ class Dungeon
         void addPlayer(Player player);
         void removePlayer();
         void removeWeapon(); //altogether with remove player();
+        void removeArmor();
         int getNumPlayer();
         void setNumPlayer();
         Player getPlayerAt(int i);
@@ -110,8 +111,9 @@ class Dungeon
         void fightingMonster();
         void giveUp();
         bool hungerWarning();
-        //void fightingSorcerer(); //for extra credit
         int getNumExplored();
+        void fightingSorcerer(); //for extra credit
+        int attackingScore();
 
         void mainNormalSpace();
         void printNormalSpaceActions(); //options when entering new space
