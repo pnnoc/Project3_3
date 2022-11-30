@@ -35,6 +35,7 @@ class Dungeon
         void removePlayer();
         void removeWeapon(); //altogether with remove player();
         int getNumPlayer();
+        void setNumPlayer();
         Player getPlayerAt(int i);
         void setFullnessAt(int player_index, int new_fullness);
         int getFullnessAt(int player_index);
@@ -115,7 +116,7 @@ class Dungeon
         void mainNormalSpace();
         void printNormalSpaceActions(); //options when entering new space
         void normalSpaceInvestigate();
-        //void normalSpacePickfight(); //just fightingMonster+50%chance condition
+        void normalSpacePickfight(); //just fightingMonster+50%chance condition
         void normalSpaceCookeat();
 
         void mainMerchant();
