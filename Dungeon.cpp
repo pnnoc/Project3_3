@@ -81,6 +81,7 @@ void Dungeon::start() //done, tested
     }
     map_.displayMap();
 
+    cout << endl;
     // //populating members vector
     cout << "Type the name of each player in your team! " << endl << "You can only type one name at a time (then hit enter)" << endl;
     do
@@ -91,8 +92,9 @@ void Dungeon::start() //done, tested
         addPlayer(p); //using function thatt we have created instead of directly push_back
         //cout << num_player_ << endl;
     } while (num_player_ < 5);
+    cout << endl;
     partyUpdate();
-
+    cout << endl;
     //populating items in party class
     cout << "Now you have a party of 5! Stick together as your fate will be determined by this mysterious dungeon!" << endl << "You have 100 gold pieces to spend on these options" << endl;
     cout << endl;
@@ -104,9 +106,11 @@ void Dungeon::start() //done, tested
     cout << "You can spend all of your money here before you start your journey, or you can save some to spend on merchants along the way. But beware, some of the merchants in this dungeon are shady characters, and they won't always give you a fair price..." << endl;
     cout << endl;
     cout << "If you're looking to get supplies, you've come to the right place." << endl << "I would be happy to part with some of my wares...for the proper price!" << endl << endl;
+    cout << endl;
     inventoryUpdate();
+    cout << endl;
     mainMerchant();
-    cout << "end start phase" << endl << endl;
+    //cout << "end start phase" << endl << endl;
 
     //populating vector of monster
     string mon_filename = "monsters.txt";
@@ -116,7 +120,7 @@ void Dungeon::start() //done, tested
     string rid_filename = "riddles.txt";
     readRiddle(rid_filename);
     //cout << getNumRiddle() << endl;
-
+    cout << endl;
     return;
 }
 
@@ -508,8 +512,11 @@ void Dungeon::statusUpdate() //done
 {
     cout << "STATUS | " << endl;
     cout << "Rooms Cleared: " << getStatusAt(0) << " | Keys: " << getStatusAt(1) << " | Anger Level: " << getStatusAt(2) << " | Number of steps: " << getStatusAt(3) << endl;
+    cout << endl;
     inventoryUpdate();
+    cout<< endl;
     partyUpdate();
+    cout << endl;
     return;
 }
 bool Dungeon::isEndgame()// used to check after actions and move,(not sure about all the conditions)
@@ -632,7 +639,7 @@ void Dungeon::fightingMonster() //done, tested but not sure if it will always wo
             break; //will this break out of the for loop
         }
     }
-    if (unique_weapon==true)
+    if (unique_weapon==true && getNumPlayer()==getNumWeapon())
     {
         d=4;
     }
@@ -781,6 +788,7 @@ void Dungeon::mainNormalSpace() //not done,
         int main_choice;
         string main;
         cin >> main;
+        cout << endl;
         // while (!(main_choice>=1 && main_choice<=5) || cin.fail())
         // {
         //     cin.clear(); 
@@ -843,11 +851,13 @@ void Dungeon::mainNormalSpace() //not done,
                 giveUp(); 
                 if(getGiveup()==true) //going out as soon as giving up
                 {
+                    cout << endl;
                     return;
                 }
                 break;
         }
     }
+    cout << endl;
     return;
 }
 void Dungeon::printNormalSpaceActions() //done
@@ -973,6 +983,7 @@ void Dungeon::normalSpaceInvestigate() // using members_erase for removeing imme
         cout << "This space has been explored! Please choose different option!" << endl;
     }
     //removePlayer(); //removing player(s) and print out the names after the fight/investigating -> dont need this becasue dying by monster already have removePlayer()
+    cout << endl;
     return;
 }
 void Dungeon::normalSpaceCookeat() //done tested
@@ -981,16 +992,19 @@ void Dungeon::normalSpaceCookeat() //done tested
     if (getPartyIngredient()<=0&&getNumCookware()<=0)
     {
         cout << "We're so sorry, you don't have any ingredient and cookware for making food!" << endl;
+        cout << endl;
         return;
     }
     else if (getPartyIngredient()>0&&getNumCookware()<=0)
     {
         cout << "You have some ingredient! Sadly, you don't have any cookware to use." << endl;
+        cout << endl;
         return;
     }
     else if (getPartyIngredient()<=0&&getNumCookware()>0)
     {
         cout << "You have some cookwares! Sadly, you don't have any ingredient to use." << endl;
+        cout << endl;
         return;
     }
     //only haveing both will not counter the previous return(s) = passed
@@ -1028,6 +1042,7 @@ void Dungeon::normalSpaceCookeat() //done tested
     if(amount_ing==0)
     {
         cout << "We are sorry you don't want to cook any food." << endl;
+        cout << endl;
         return;
     }
 
@@ -1133,6 +1148,7 @@ void Dungeon::normalSpaceCookeat() //done tested
     }
     partyUpdate();
     cout << "You have " << getPartyIngredient() << " kg of ingredient left." << endl;
+    cout << endl;
     return;
 }
 void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> no need another function then
@@ -1153,6 +1169,7 @@ void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> n
             cout << "You don't have amy weapon and armor to fight a monster." << endl;
         }
         cout << "Please choose another option!" << endl;
+        cout << endl;
         return;
     }
 
@@ -1160,6 +1177,7 @@ void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> n
     if(!ishaveMonLevel(mon_level)) //does not have mon
     {
         cout << "You have defeated all monsters of level " << mon_level << " !!!" << endl;
+        cout << endl;
         return; //terminate the function as soon as there is no monster of this level left.
     }
 
@@ -1289,11 +1307,13 @@ void Dungeon::normalSpacePickfight() //probably the same as fightingMonster -> n
                     setFullnessAt(i, getFullnessAt(i)-1);
                 }
             }
+            cout << endl;
             partyUpdate();
         }
         //removePlayer(); //this function will print out people you've lost (people who die from being slained rather than by hunger)
         removeWeapon(); //akways checks after losing player
     }
+    cout << endl;
     return;
 }
 
@@ -1305,15 +1325,31 @@ void Dungeon::mainMerchant()
     {
         printMerchant();
         int main_choice;
-        cin >> main_choice;
-        while (!(main_choice>=1 && main_choice<=6) || cin.fail())
+        string main;
+        cin >> main;
+
+        bool isInputValid = false;
+        while (!isInputValid) //this while loop is fucking important!!!!!!!
         {
-            cin.clear(); 
-            cin.ignore(100,'\n'); //these two lines will prevent while from running infinite becasue of not inputing integer. 512 mean will clear 512 character of the input
-            printMerchant();
-            cout << "Please enter number between 1 and 6" << endl;
-            cin >> main_choice;
+            while (isInputInteger(main)==false)
+            {
+                cout << "Please enter integer." << endl;
+                cin >> main;
+            }
+
+            if (!(stoi(main) >= 1 && stoi(main) <= 6))
+            {
+                cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
+                cin >> main;
+            }
+            else
+            {
+                isInputValid = true; //breaking the loop when the input is valid
+            }
         }
+        cout << endl;
+
+        main_choice=stoi(main);
         switch (main_choice)
         {
             case 1:
@@ -1364,7 +1400,7 @@ void Dungeon::merchant_ingredient()
     cout << "(Enter a positive mulitple of 5, or 0 to cancel)" << endl;
     string ingre;
     cin >> ingre;
-
+    cout << endl;
     //while making sure that the input is the integer
     //while mnaking sure that the integer is positive multiple of 5
     bool isInputValid = false;
@@ -1392,6 +1428,7 @@ void Dungeon::merchant_ingredient()
     if (ingre_amount==0)
     {
         cout << "We are sad that you decided not to buy any ingredient from us. What else can I get for you?" << endl;
+        cout << endl;
         return; //this will be out of the function and start again att the main merchant menu
     }
     else
@@ -1401,6 +1438,7 @@ void Dungeon::merchant_ingredient()
         {
             cout << "Sorry!, you don't have enough gold for buying " << ingre_amount << " kg of ingredients" << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
 
@@ -1411,9 +1449,11 @@ void Dungeon::merchant_ingredient()
         {
             setPartyGold((getPartyGold())-cost);
             setPartyIngredient(ingre_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
+    cout << endl;
     return;
 }
 void Dungeon::merchant_cookware()
@@ -1444,7 +1484,9 @@ void Dungeon::merchant_cookware()
     if (cw_type=="4")
     {
         cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
+        cout << endl;
         inventoryUpdate();
+        cout << endl;
         return;
     }
 
@@ -1477,6 +1519,7 @@ void Dungeon::merchant_cookware()
     if(cook_amount==0)
     {
         cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
+        cout << endl;
         return;
     }
     
@@ -1487,6 +1530,7 @@ void Dungeon::merchant_cookware()
         {
             cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Ceremic Pot(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << cook_amount << " Ceramic Pot(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1496,8 +1540,10 @@ void Dungeon::merchant_cookware()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyCookwareAt(0, (getPartyCookwareAt(0))+cook_amount);
+            cout << endl;
             inventoryUpdate();
         }
+        cout << endl;
         return;
     }
     else if (cw_type=="2")
@@ -1507,6 +1553,7 @@ void Dungeon::merchant_cookware()
         {
             cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Frying Pan(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << cook_amount << " Frying Pan(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1516,8 +1563,10 @@ void Dungeon::merchant_cookware()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyCookwareAt(1, (getPartyCookwareAt(1))+cook_amount);
+            cout << endl;
             inventoryUpdate();
         }
+        cout << endl;
         return;
     }
     else if (cw_type=="3")
@@ -1527,6 +1576,7 @@ void Dungeon::merchant_cookware()
         {
             cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Cauldron(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << cook_amount << " Cauldron(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1536,10 +1586,13 @@ void Dungeon::merchant_cookware()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyCookwareAt(2, (getPartyCookwareAt(2))+cook_amount);
+            cout << endl;
             inventoryUpdate();
         }
+        cout << endl;
         return;
     }
+    cout << endl;
     return;
 }
 void Dungeon::merchant_weapon() //have to work on the condition of removing weapon to upgrade the weapon -> is it requireed by the game?
@@ -1547,6 +1600,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
     if (getNumWeapon()>=getNumPlayer())
     {
         cout << "Your party is holding " << getNumWeapon() << " weapons! You cannot buy more of them!" << endl;
+        cout << endl;
         return;
     }
 
@@ -1575,10 +1629,12 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         cin >> weapon_type;
     }
 
+    cout << endl;
     if (weapon_type == "6")
     {
         cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
         //inventoryUpdate();
+        cout << endl;
         return;
     }
 
@@ -1608,13 +1664,14 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
             isInputValid = true; //breaking the loop when the input is valid
         }
     }
-
+    cout << endl;
     int weapon_amount;
     weapon_amount = stoi(weapon);
     if(weapon_amount==0)
     {
         cout << "We are sad that you decided not to buy any weapon from us. What else can I get for you?" << endl;
         //inventoryUpdate();
+        cout << endl;
         return;
     }
    
@@ -1625,6 +1682,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Stone Club(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << weapon_amount << " Stone Club(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1644,6 +1702,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Iron Spear(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << weapon_amount << " Iron Spear(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1663,6 +1722,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Mythril Rapier(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << weapon_amount << " Mythril Rapier(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1682,6 +1742,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Flaming Battle-Axe(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << weapon_amount << " Flaming Battle-Axe(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1701,6 +1762,7 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Vorpal Longsword(s)." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
         cout << "You want to buy " << weapon_amount << " Vorpal Longsword(s) for " << cost << " Gold? (y/n)" << endl;
@@ -1710,11 +1772,11 @@ void Dungeon::merchant_weapon() //have to work on the condition of removing weap
         {
             setPartyGold(getPartyGold() - cost);
             setPartyWeaponAt(4,(getPartyWeaponAt(4))+weapon_amount);
-            //inventoryUpdate();
         }
     }
-    // maybe we can just put inventoryUpdated at the end
+    cout << endl;
     inventoryUpdate();
+    cout << endl;
     return;
 }
 void Dungeon::merchant_armor()
@@ -1745,11 +1807,12 @@ void Dungeon::merchant_armor()
             isInputValid = true; //breaking the loop when the input is valid
         }
     }
-
+    cout << endl;
     armor_amount = stoi(armor);
     if (armor_amount==0)
     {
         cout << "We are sad that you decided not to buy any armor from us. What else can I get for you?" << endl;
+        cout << endl;
         return; //this will be out of the function and start again att the main merchant menu
     }
     else
@@ -1759,6 +1822,7 @@ void Dungeon::merchant_armor()
         {
             cout << "Sorry!, you don't have enough gold for buying " << armor_amount << " armor suits" << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
 
@@ -1772,7 +1836,9 @@ void Dungeon::merchant_armor()
             //inventoryUpdate();
         }
     }
+    cout << endl;
     inventoryUpdate();
+    cout << endl;
     return;
 }
 void Dungeon::merchant_sell()
@@ -1786,6 +1852,7 @@ void Dungeon::merchant_sell()
     {
         cout << "You have no treasures to be sold at the moment. Please come back later!" << endl;
         cout << "What else can I get for you?" << endl;
+        cout << endl;
         return;
     }
 
@@ -1805,10 +1872,11 @@ void Dungeon::merchant_sell()
         cout << "Please enter number between 1-6" << endl;
         cin >> treasure_type;
     }
-
+    cout << endl;
     if (treasure_type=="6")
     {
         cout << "We are sad that you decided not to sell any treasure to us. What else can I get for you?" << endl;
+        cout << endl;
         return;
     }
 
@@ -1835,11 +1903,12 @@ void Dungeon::merchant_sell()
             isInputValid = true; //breaking the loop when the input is valid
         }
     }
-
+    cout << endl;
     treasure_amount=stoi(treasure);
     if(treasure_amount==0)
     {
         cout << "We are sad that you decided not to sell any treasure to us. What else can I get for you?" << endl;
+        cout << endl;
         return;
     }
 
@@ -1849,6 +1918,7 @@ void Dungeon::merchant_sell()
         {
             cout << "Sorry!, you don't have enough Silver ring to be sold." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return;
         }
 
@@ -1869,6 +1939,7 @@ void Dungeon::merchant_sell()
         {
             cout << "Sorry!, you don't have enough Ruby necklace to be sold." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return;
         }
 
@@ -1880,6 +1951,7 @@ void Dungeon::merchant_sell()
         {
             setPartyGold(getPartyGold() + cost);
             setPartyTreasureAt(1, getPartyTreasureAt(1)-treasure_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
@@ -1889,6 +1961,7 @@ void Dungeon::merchant_sell()
         {
             cout << "Sorry!, you don't have enough Emerald bracelet to be sold." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return;
         }
 
@@ -1900,6 +1973,7 @@ void Dungeon::merchant_sell()
         {
             setPartyGold(getPartyGold() + cost);
             setPartyTreasureAt(2, getPartyTreasureAt(2)-treasure_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
@@ -1909,6 +1983,7 @@ void Dungeon::merchant_sell()
         {
             cout << "Sorry!, you don't have enough Diamond circlet to be sold." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return;
         }
 
@@ -1920,6 +1995,7 @@ void Dungeon::merchant_sell()
         {
             setPartyGold(getPartyGold() + cost);
             setPartyTreasureAt(3, getPartyTreasureAt(3)-treasure_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
@@ -1929,6 +2005,7 @@ void Dungeon::merchant_sell()
         {
             cout << "Sorry!, you don't have enough Gem-encrusted goblet to be sold." << endl;
             cout << "What else can I get you?" << endl;
+            cout << endl;
             return;
         }
 
@@ -1940,9 +2017,12 @@ void Dungeon::merchant_sell()
         {
             setPartyGold(getPartyGold() + cost);
             setPartyTreasureAt(4, getPartyTreasureAt(4)-treasure_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
+    cout << endl;
+    return;
 }
 
 void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub function
@@ -1959,6 +2039,7 @@ void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub fun
             cout << "Please enter number between 1-3." << endl;
             cin >> action;
         }
+        cout << endl;
         if (action=="1")
         {
             //each player has a 20% chance of dropping fullness by 1
@@ -1985,10 +2066,12 @@ void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub fun
             giveUp(); 
             if(getGiveup()==true) //going out as soon as giving up
             {
+                cout << endl;
                 return;
             }
         }
     }
+    cout << endl;
     return;
 }
 void Dungeon::printNPCAction()
@@ -2004,6 +2087,7 @@ void Dungeon::npc_speak()
     //if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol())) //***have to check this isExplored function because NPC is set to be found when entering the space eventhough haven't talked to them
     {
         cout << "You have already talked to a NPC! Please choose another option" << endl; 
+        cout << endl;
         return;
     }
 
@@ -2013,6 +2097,7 @@ void Dungeon::npc_speak()
     cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
     cout << "What is the answer: ";
     cin >> riddle_ans;
+    cout << endl;
     if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
     {
         cout << "You have got the corrected answer! NPC is willing to offer trading with the merchant!" << endl << "Do you want to buy goods? (y/n)" << endl;
@@ -2044,6 +2129,7 @@ void Dungeon::npc_speak()
     map_.removeNPC(map_.getPlayerRow(), map_.getPlayerCol());
     //map_.exploreSpace(map_.getPlayerRow(), map_.getPlayerCol()); //setting the space to be explored
     //space will change from an NPC space to a normal space which is marked as "explored".
+    cout << endl;
     return;
 }
 
@@ -2061,6 +2147,7 @@ void Dungeon::mainRoom() // done but not test
             cout << "Please enter number between 1-3." << endl;
             cin >> action;
         }
+        cout << endl;
         if (action=="1") //moving
         {
             //each player has a 20% chance of dropping fullness by 1
@@ -2087,10 +2174,12 @@ void Dungeon::mainRoom() // done but not test
             giveUp(); 
             if(getGiveup()==true) //going out as soon as giving up
             {
+                cout << endl;
                 return;
             }
         }
     }
+    cout << endl;
     return;
 }
 void Dungeon::printRoomActions()
@@ -2104,6 +2193,7 @@ void Dungeon::roomOpen()
     if (map_.isRoomLocation(map_.getPlayerRow(), map_.getPlayerCol()) == false)
     {
         cout << "You have already openned this room!" << endl;
+        cout << endl;
         return;
     }
 
@@ -2112,6 +2202,7 @@ void Dungeon::roomOpen()
     {
         cout << "You dont have a key for openning the secret room!" << endl << "You have fallen into the trap!" << endl << "To escape you must complete the puzzle!" << endl;
         //door puzzle
+        cout << endl;
         cout << "The game is Boulder/Parchment/Shears! The rule is Boulder beats Shears / Shears beat Parchment / Parchment beats Boulder." << endl << "If you're lucky yours will beat the door's!!!" << endl;
         bool loop = true;
         while (loop)
@@ -2125,6 +2216,7 @@ void Dungeon::roomOpen()
                 cout << "Please enter 1, 2, or 3." << endl;
                 cin >> player_puzzle;
             }
+            cout << endl;
             if ((player_puzzle=="1"&&door_puzzle==2) || (player_puzzle=="2"&&door_puzzle==3) || (player_puzzle=="3"&&door_puzzle==1)) // (player win)
             {
                 cout << "You have won the puzzle! Now you can enter a room" << endl;
@@ -2163,6 +2255,7 @@ void Dungeon::roomOpen()
             cout << "You don't have amy weapon and armor to fight a monster." << endl;
         }
         cout << "Please choose another option!" << endl;
+        cout << endl;
         return;
     }
 
@@ -2192,6 +2285,7 @@ void Dungeon::roomOpen()
         else
         {
             cout << "You have defeated all monsters of level " << mon_level << " !!!" << endl;
+            cout << endl;
             return; //terminate the function as soon as there is no monster of this level left.
         }
 
@@ -2315,6 +2409,7 @@ void Dungeon::roomOpen()
     {
         cout << "You have lost the puzzle and does not have a key! Please come back later!" << endl;
     }
+    cout << endl;
     return;
 }
 
@@ -2650,7 +2745,9 @@ void Dungeon::mainGame()
     while(!isEndgame()) // !isEndgame()=true when the game continues (loop continues), !isEndgame()=false when game ends (loop stops)
     {
         statusUpdate(); //-> including party and inventory
+        cout << endl;
         map_.displayMap();
+        cout << endl;
         bool isHunWarn = false;
         if(hungerWarning()) //if there is a hunger warning at the start -> player's fullness that is still 0 at the end of the turn will be eliminate
         {
