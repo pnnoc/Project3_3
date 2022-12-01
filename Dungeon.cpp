@@ -1,9 +1,8 @@
-// Dunegeon.cpp
+// Project 3 - Dunegeon.cpp
 // CSCI 1300 Fall 2022
-// Author: Con Muangkod
-// Recitation: 100 – Keshavaiah Naidu
-// Project3
-// Partner: Thanh-Thanh Dao
+// Author: Thanh-Thanh Dao
+// Recitation: 112 – Raegan Rychecky
+// Partner: Con Muangkod
 
 #include <iostream> 
 #include <fstream>
@@ -3335,17 +3334,23 @@ void Dungeon::misfortuneNormal() //done but not tested
     return;
 }
 
-// give up
+// GIVE UP
 bool Dungeon::getGiveup()
 {
     return giveup_;
 }
+
 void Dungeon::setGiveup(bool giveup)
 {
     giveup_ = giveup;
 }
 
-// Algorithm will determine if user really gives up 
+/*
+Algorithm will determine if user really wants to give up
+1. Ask user if they are sure they want to give up - takes in user input
+2. if user inputs y/Y, will call setGiveup function and set as true to end game
+3. if user inputs n/N, game will continue
+*/
 void Dungeon::giveUp()
 {
     cout << "I understand that escaping this dungeon is not easy, but do you really want to give up? (y/n)" << endl;
@@ -3368,7 +3373,8 @@ void Dungeon::giveUp()
     return;
 }
 
-// functions for game to run
+// FUNCTIONS FOR GAME TO RUN
+
 /*
 Algorithm will start the game!
 1. The map of the game will first be displayed with player's origin set, add NPC randomly throughout map, 
@@ -3444,7 +3450,14 @@ void Dungeon::start()
     return;
 }
 
-// Algorithm is the main game function that goes through the game
+/*
+Algorithm will start the game!
+1. While loop that continues until endGame is true
+2. will print out status and map
+3. every turn will check hunger status of each player and warn user if teammate is close to dying
+5. each move will determine if it's an expxlored space, free space, or dungeon exit
+6. check if player has died from hunger each turn and determine if mistfortuneRoom or misfortuneNormal will carry out
+*/
 void Dungeon::mainGame()
 {
     // isEndgame is defaulted as false
@@ -3533,7 +3546,12 @@ void Dungeon::mainGame()
     return;
 }
 
-// Algorithm is the end game function that will print out users overall stats if they have successfully won or lost
+/*
+Algorithm will end game and show status of what user has achieved in the game
+1. will determine if user has successfully escaped dungeon or has lost
+2. will print the final status such as gold, treasues, rooms clear, monsters defeated, players remaning, 
+and turns taken
+*/
 void Dungeon::endGame() ////almost done but not tested
 {
     cout << "THE JOURNEY HAS ENDED!!!" << endl;
@@ -3543,22 +3561,19 @@ void Dungeon::endGame() ////almost done but not tested
     }
     else
     {
-        cout << "You have lost in the dungeon forever! No light will ever shine upon you for the eternity!" << endl;
+        cout << "You are now lost in the dungeon forever! No light will ever shine upon you for all eternity!" << endl;
     }
 
-    //cout << "Here is you final status!" << endl;
-    //name of the leader + remaining members
     partyUpdate();
     //number of rooms cleared
     cout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    cout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
+    cout << "The amount of Gold pieces remaining: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
-    cout << "The treasures currently collected and held: ";
+    cout << "The treasures collected and held: ";
     for (int i=0; i<5; i++)
     {
-        // if(getPartyTreasureAt(i)!=0)
-        // {
+
             if (i==0)
             {
                 cout << "Silver Ring - " << getPartyTreasureAt(0) << " | ";
@@ -3579,7 +3594,6 @@ void Dungeon::endGame() ////almost done but not tested
             {
                 cout << "Gem-encrusted goblet - " << getPartyTreasureAt(4) << " | ";
             }
-        // }
     }
     cout << endl;
 
@@ -3648,9 +3662,16 @@ double Dungeon::scoreCalculation()
     //save total_score and leader's name in "score board.txt"
 }
 
-// score board / stats of the game
+// SCORE BOARD / STATS OF GAME
 
-// Algorithm will write the stats into stats.txt when game has ended
+/*
+Algorithm will write the stats into stats.txt when game has ended
+1. open file stats.txt
+2. will write into stats.txt
+3. party members status, rooms cleared, gold remaining, treasues, monsters defeated, spaces explored, 
+and number of turns taken
+4. close file when done writing all stats in file
+*/
 void Dungeon::saveStats()
 {
     ofstream fout;
@@ -3664,9 +3685,9 @@ void Dungeon::saveStats()
     //number of rooms cleared
     fout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    fout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
+    fout << "The amount of Gold pieces remaining: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
-    fout << "The treasures currently collected and held: ";
+    fout << "The treasures collected and held: ";
     for (int i=0; i<5; i++)
     {
         if(getPartyTreasureAt(i)!=0)
@@ -3706,7 +3727,12 @@ void Dungeon::saveStats()
     return;
 }
 
-// Algorithm will save write score into score.txt when game has ended
+/*
+Algorithm will save write score into score.txt when game has ended
+1. will open file score.txt
+2. will write in the score that was calculated using scoreCalculation function
+3. close file
+*/
 void Dungeon::saveScore()
 {
     ofstream fout;
@@ -3718,7 +3744,14 @@ void Dungeon::saveScore()
     return;
 }
 
-// Algorithm will print out the score board from score.txt file!
+/*
+Algorithm will print out the score board from score.txt file
+1. open the file score.txt
+2. loop through each line while using split function used to get each line of each name and score
+3. store into an temp array that will then we stored in vector
+4. Score will be organized from highest to lowest
+5. loop through vector to print out scoreboard
+*/
 void Dungeon::scoreBoard() 
 {
     //reading from score.txt
