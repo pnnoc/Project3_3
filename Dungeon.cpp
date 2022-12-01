@@ -2420,7 +2420,7 @@ void Dungeon::merchant_sell()
     if (num_treasures_total==0)
     {
         cout << "You have no treasures to be sold at the moment. Please come back later!" << endl;
-        cout << "What else can I get for you?" << endl;
+        cout << "What else can I do for you?" << endl;
         cout << endl;
         return;
     }
@@ -2438,7 +2438,7 @@ void Dungeon::merchant_sell()
     cin >> treasure_type;
     while (!(treasure_type=="1" || treasure_type=="2" || treasure_type=="3" || treasure_type=="4" || treasure_type=="5" || treasure_type=="6"))
     {
-        cout << "Please enter number between 1-6" << endl;
+        cout << "Please enter a number between 1-6" << endl;
         cin >> treasure_type;
     }
     cout << endl;
@@ -2454,7 +2454,7 @@ void Dungeon::merchant_sell()
     string treasure;
     cin >> treasure;
     bool isInputValid = false;
-    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    while (!isInputValid) 
     {
         while (isInputInteger(treasure)==false)
         {
@@ -2551,7 +2551,7 @@ void Dungeon::merchant_sell()
         if (treasure_amount > getPartyTreasureAt(3))
         {
             cout << "Sorry! You don't have enough Diamond circlet to be sold." << endl;
-            cout << "What else can I get you?" << endl;
+            cout << "What else can I do you?" << endl;
             cout << endl;
             return;
         }
@@ -2573,7 +2573,7 @@ void Dungeon::merchant_sell()
         if (treasure_amount > getPartyTreasureAt(4))
         {
             cout << "Sorry! You don't have enough Gem-encrusted goblet to be sold." << endl;
-            cout << "What else can I get you?" << endl;
+            cout << "What else can I do you?" << endl;
             cout << endl;
             return;
         }
@@ -2593,8 +2593,14 @@ void Dungeon::merchant_sell()
     cout << endl;
     return;
 }
-
-void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub function
+// NPC //
+/*
+Algorithm will ask user for which action they want
+1. option one is to move - there is 20% for each player that they may lose fullness by 1
+2. option two is to talk to npc - calls npc speak function
+3. give up function where user quits game
+*/
+void Dungeon::mainNPCAction() 
 {
     bool loop = true;
     while(loop)
@@ -2643,26 +2649,33 @@ void Dungeon::mainNPCAction() //done but not tested -> need to adjustthe sub fun
     cout << endl;
     return;
 }
-
+// Algorithm will print out user options when they encounter a NPC
 void Dungeon::printNPCAction()
 {
-    cout << "You have faced NPC in this space!!! Here are things you can do! Let's see what NPC can give you!!!" << endl;
+    cout << "You have faced an NPC in this space!!! Here are things you can do! Let's see what this NPC can give you!!!" << endl;
     cout << "1. Move" << endl << "2. Speak to NPC" << endl << "3. Give up" << endl;
     return;
 }
-
+/*
+Algorithm will prompt user with randome riddle in order for user to access the shop, if user fails, they will face an angry NPC and have to fight a monster, NPC disappears after 
+1. If user has already spoken with NPC, it will prompt user to choose another option
+2. Random riddle will be prompted for user to answer
+3. if user is wrong, they will have to fight the monster NPC spawns
+4. if user answers correctly, they get the chance to trade, if they say no, they loose their chance
+5. NPC disappears after being spoken with
+*/
 void Dungeon::npc_speak()
 {
     //cannot talk to NPC twice
     if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == ' ')
     //if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol())) //***have to check this isExplored function because NPC is set to be found when entering the space eventhough haven't talked to them
     {
-        cout << "You have already talked to a NPC! Please choose another option" << endl; 
+        cout << "You have already talked to this NPC! Please choose another option" << endl; 
         cout << endl;
         return;
     }
 
-    cout << "You are interacting with a NPC! Try answering their question correctly and they will be nice to you, otherwise they will summon a monster!!!" << endl;
+    cout << "You are interacting with an NPC! Try answering their question correctly and they will be nice to you, otherwise they will summon a monster!!!" << endl;
     int riddle_index = rand()%getNumRiddle();
     string riddle_ans;
     cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
@@ -2671,7 +2684,7 @@ void Dungeon::npc_speak()
     cout << endl;
     if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
     {
-        cout << "You have got the corrected answer! NPC is willing to offer trading with the merchant!" << endl << "Do you want to buy goods? (y/n)" << endl;
+        cout << "You got the correct answer! This NPC is willing to offer trading with the merchant!" << endl << "Do you want to buy goods? (y/n)" << endl;
         string yn;
         while (!(yn == "y" || yn == "Y" || yn == "n" || yn == "N"))
         {
@@ -2689,7 +2702,7 @@ void Dungeon::npc_speak()
     }
     else
     {
-        cout << "You have got the wrong answer? NPC has become hostile and summoned a monster!!!" << endl;
+        cout << "You got the wrong answer! The NPC has become hostile and summoned a monster!!!" << endl;
         //fighting monster function
         fightingMonster();
     }
@@ -2698,13 +2711,17 @@ void Dungeon::npc_speak()
     setNumRiddle(); // just in case
 
     map_.removeNPC(map_.getPlayerRow(), map_.getPlayerCol());
-    //map_.exploreSpace(map_.getPlayerRow(), map_.getPlayerCol()); //setting the space to be explored
-    //space will change from an NPC space to a normal space which is marked as "explored".
     cout << endl;
     return;
 }
-
-void Dungeon::mainRoom() // done but not test
+// ROOM // 
+/*
+Algorithm will ask user for which action they want
+1. option one is to move - there is 20% for each player that they may lose fullness by 1
+2. option two is to open the door - will promp roomOpen() function
+3. give up function where user quits game
+*/
+void Dungeon::mainRoom() 
 {
     bool loop = true;
     while(loop)
@@ -2715,7 +2732,7 @@ void Dungeon::mainRoom() // done but not test
         while (!(action=="1" || action=="2" || action=="3"))
         {
             printRoomActions();
-            cout << "Please enter number between 1-3." << endl;
+            cout << "Please enter a number between 1-3." << endl;
             cin >> action;
         }
         cout << endl;
@@ -2753,14 +2770,23 @@ void Dungeon::mainRoom() // done but not test
     cout << endl;
     return;
 }
-
+// Algorithm will print out user options when they encounter a room
 void Dungeon::printRoomActions()
 {
     cout << "You have found a secret room!!! Here are things you can do! Let's see what secret lies behind the door!!!" << endl;
     cout << "1. Move" << endl << "2. Open the door" << endl << "3. Give up" << endl;
     return;
 }
-
+/*
+Algorithm will determine if user has key or not to see if they will win rewards and clear room
+1. if there is key, they won't go through the door puzzle
+2. if party does not have any armor, they may not enter the room and must continue their journey
+3. if no key, they will have to win puzzle to enter room
+4. if puzzle is lost, player will lost member and have to continue their journey
+5. upon entering the room, party must defeat monster to gain prizes and clear room, 
+6. if they loose to the monster, they'll loose ingredients and gold, and may lose teammate
+7. if party clears 4 rooms, they will fight sorcerer
+*/
 void Dungeon::roomOpen()
 {
     if (map_.isRoomLocation(map_.getPlayerRow(), map_.getPlayerCol()) == false)
@@ -2773,14 +2799,14 @@ void Dungeon::roomOpen()
     bool win_puzzle = false;
     if (getStatusAt(1)==0) //trying to open the room butt does not have the key (if the player has the key this wont run and will go to the 2nd if)
     {
-        cout << "You dont have a key for openning the secret room!" << endl << "You have fallen into the trap!" << endl << "To escape you must complete the puzzle!" << endl;
+        cout << "You dont have a key for opening the secret room!" << endl << "You have fallen into the trap!" << endl << "To escape you must complete the puzzle!" << endl;
         //door puzzle
         cout << endl;
         cout << "The game is Boulder/Parchment/Shears! The rule is Boulder beats Shears / Shears beat Parchment / Parchment beats Boulder." << endl << "If you're lucky yours will beat the door's!!!" << endl;
         bool loop = true;
         while (loop)
         {
-            cout << "To choose your guess, you have to enter: 1. Boulder   2. Shears   3.Parchment" << endl; //number assigned to the name
+            cout << "To choose, you have to enter: 1. Boulder   2. Shears   3.Parchment" << endl; //number assigned to the name
             int door_puzzle = rand()%3 + 1; //1-3
             string player_puzzle;
             cin >> player_puzzle;
@@ -2823,11 +2849,11 @@ void Dungeon::roomOpen()
         }
         else if (getNumWeapon()>0 && getPartyArmor()==0)
         {
-            cout << "You don't have any armor to protect your team fighting a monster." << endl;
+            cout << "You don't have any armor to protect your team fighting the monster." << endl;
         }
         else if (getNumWeapon()==0 && getPartyArmor()==0)
         {
-            cout << "You don't have amy weapon and armor to fight a monster." << endl;
+            cout << "You don't have any weapons or armor to fight the monster." << endl;
         }
         cout << "Please choose another option!" << endl;
         cout << endl;
@@ -2993,8 +3019,17 @@ void Dungeon::roomOpen()
     cout << endl;
     return;
 }
-
-void Dungeon::misfortuneRoom() //done but not test
+// MISFORTUNE // 
+/*
+Algorithm is for musfortunes for rooms which will determine whether party will lose armor/weapon, have ingredients.cookware stolen, 
+or if teammate will get food poisoning, or player will get stuck in room
+1. 10% chance party will lost weapon/armor
+2. 30% chance party will lost ingredients
+3. 30% chance a teammate will get food poisoning - if teammate fullness is less than or equal to 10, they die
+4. 30% chance a teammate will get stuck in previous room
+5. if there are less tahn 2 players, team loses
+*/
+void Dungeon::misfortuneRoom() 
 {
     int random = rand()%10+1;
     if (random == 1) //losing random weapon or armor
@@ -3005,7 +3040,7 @@ void Dungeon::misfortuneRoom() //done but not test
         {
             if (getNumWeapon()==0) //no weapon
             {
-                cout << "Good for you, you have no weapon to be broken!" << endl;
+                cout << "Good for you, you have no weapons to be broken!" << endl;
                 return;
             }
             //use the while loop to random the index of weapon to find the one that is not 0
@@ -3049,7 +3084,7 @@ void Dungeon::misfortuneRoom() //done but not test
                     cout << "Good for you! You have no armor to be broken!" << endl;
                     return;
                 }
-                cout << "OH NO! Your Armoe broke!" << endl;
+                cout << "OH NO! Your armor broke!" << endl;
                 setPartyArmor(getPartyArmor()-1);
             }   
     }
@@ -3059,19 +3094,19 @@ void Dungeon::misfortuneRoom() //done but not test
         {
             if (getPartyIngredient()==0)
             {
-                cout << "Good for you! You have no ingredient to be stolen!" << endl;
+                cout << "Good for you! You have no ingredients to be stolen!" << endl;
                 return;
             }
             else if (getPartyIngredient()<=10)
             {
                 cout << "OH NO! Your team was robbed by dungeon bandits!" << endl;
-                cout << "Your " << getPartyIngredient() << " kg of ingredient got stolen!" << endl;
+                cout << "Your " << getPartyIngredient() << " kg of ingredients got stolen!" << endl;
                 setPartyIngredient(0);
             }
             else if (getPartyIngredient()>10)  
             {
                 cout << "OH NO! Your team was robbed by dungeon bandits!" << endl;
-                cout << "Your 10 kg of ingredient got stolen!" << endl;
+                cout << "Your 10 kg of ingredients got stolen!" << endl;
                 setPartyIngredient(getPartyIngredient()-10);
             }
         }
@@ -3127,7 +3162,7 @@ void Dungeon::misfortuneRoom() //done but not test
         {
             if (player_index!=0) //not the leader
             {
-                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
+                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and died from food poisoning!!" << endl;
                 members_.erase(members_.begin()+player_index);
                 removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
@@ -3135,7 +3170,7 @@ void Dungeon::misfortuneRoom() //done but not test
             }
             else
             {
-                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
+                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0 due to food poisoning!! The game is over!" << endl;
                 setFullnessAt(0,0);
                 setGiveup(true);
                 return;
@@ -3145,7 +3180,7 @@ void Dungeon::misfortuneRoom() //done but not test
         else if (getFullnessAt(player_index)>10)
         {
             setFullnessAt(player_index, getFullnessAt(player_index)-10);
-            cout << "There is a food poisoning! "<< getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << ". (because of the misfortune)" << endl;
+            cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << " due to food poisoning" << endl;
         }
     }
     else if (random>7 && random<11) //8,9,10
@@ -3171,7 +3206,14 @@ void Dungeon::misfortuneRoom() //done but not test
     }
     return;
 }
-
+/*
+Algorithm is for musfortunes for rooms which will determine whether party will lose armor/weapon, have ingredients.cookware stolen, 
+or if teammate will get food poisoning
+1. 10% chance party will lost weapon/armor
+2. 30% chance party will lost ingredients
+3. 30% chance a teammate will get food poisoning - if teammate fullness is less than or equal to 10, they die
+5. if there are less tahn 2 players, team loses
+*/
 void Dungeon::misfortuneNormal() //done but not tested
 {
     int random = rand()%10+1;
@@ -3183,12 +3225,12 @@ void Dungeon::misfortuneNormal() //done but not tested
         {
             if (getNumWeapon()==0) //no weapon
             {
-                cout << "Good for you, you have no weapon to be broken!" << endl;
+                cout << "Good for you, you have no weapons to be broken!" << endl;
                 return;
             }
             //use the while loop to random the index of weapon to find the one that is not 0
             bool weapon_found = false;
-            int weapon_index =0; //ginvign the initial value does not matter (be cause this loop will always find one, this is the case that num_weapon is not zero)
+            int weapon_index =0; //giving the initial value does not matter (be cause this loop will always find one, this is the case that num_weapon is not zero)
             while (!weapon_found) //while it's true (weapon_not found yet)
             {
                 int index_rand = rand()%5; //0-4
@@ -3227,7 +3269,7 @@ void Dungeon::misfortuneNormal() //done but not tested
                     cout << "Good for you! You have no armor to be broken!" << endl;
                     return;
                 }
-                cout << "OH NO! Your Armoe broke!" << endl;
+                cout << "OH NO! Your armor broke!" << endl;
                 setPartyArmor(getPartyArmor()-1);
             }   
     }
@@ -3309,11 +3351,11 @@ void Dungeon::misfortuneNormal() //done but not tested
                 removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
                 removeArmor();
-                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
+                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and died from food poisoning!!" << endl;
             }
             else
             {
-                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
+                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0 due to food poisoning!! The game is over!" << endl;
                 setFullnessAt(0, 0);
                 setGiveup(true);
                 return;
@@ -3323,12 +3365,20 @@ void Dungeon::misfortuneNormal() //done but not tested
         else if (getFullnessAt(player_index)>10)
         {
             setFullnessAt(player_index, getFullnessAt(player_index)-10);
-            cout << "There is a food poisoning! "<< getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << ". (because of the misfortune)" << endl;
+            cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << " due to food poisoning!!" << endl;
         }
     }
     return;
 }
-
+// MAIN AND END GAME
+/*
+Algorithm will start the game!
+1. While loop that continues until endGame is true
+2. will print out status and map
+3. every turn will check hunger status of each player and warn user if teammate is close to dying
+5. each move will determine if it's an expxlored space, free space, or dungeon exit
+6. check if player has died from hunger each turn and determine if mistfortuneRoom or misfortuneNormal will carry out
+*/
 void Dungeon::mainGame()
 {
     // isEndgame is defaulted as false
@@ -3362,7 +3412,7 @@ void Dungeon::mainGame()
         else if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == 'N')
         //else if (map_.isNPCLocation(map_.getPlayerRow(), map_.getPlayerCol())) // player's position = NPC space
         { //this statement does not work when entering NPC because MOVE function from the map will set NPC space = explored space and 
-            cout << "You have found a NPC" << endl;
+            cout << "You have found a  NPC" << endl;
             mainNPCAction();
         }
         else if(map_.isDungeonExit(map_.getPlayerRow(), map_.getPlayerCol())) //CONDITION WORKS
@@ -3421,7 +3471,12 @@ void Dungeon::mainGame()
 
     return;
 }
-
+/*
+Algorithm will end game and show status of what user has achieved in the game
+1. will determine if user has successfully escaped dungeon or has lost
+2. will print the final status such as gold, treasues, rooms clear, monsters defeated, players remaning, 
+and turns taken
+*/
 void Dungeon::endGame() ////almost done but not tested
 {
     cout << "THE JOURNEY HAS ENDED!!!" << endl;
@@ -3431,16 +3486,14 @@ void Dungeon::endGame() ////almost done but not tested
     }
     else
     {
-        cout << "You have lost in the dungeon forever! No light will ever shine upon you for the eternity!" << endl;
+        cout << "You are now lost in the dungeon forever! No light will ever shine upon you for all eternity!" << endl;
     }
 
-    //cout << "Here is you final status!" << endl;
-    //name of the leader + remaining members
     partyUpdate();
     //number of rooms cleared
     cout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    cout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
+    cout << "The amount of Gold remaining: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
     cout << "The treasures currently collected and held: ";
     for (int i=0; i<5; i++)
@@ -3481,8 +3534,16 @@ void Dungeon::endGame() ////almost done but not tested
 
     //save all these data in "results.txt"
 }
-
-double Dungeon::scoreCalculation() //tested
+// SCORE BOARD / STATS OF GAME //
+/*
+Algorithm will calculate the score that the user gets when game is over
+1. selling everything back into money (inventory, tresures) -> based on the room cleared
+2. the number of members () -> based on room cleared + their fullness level
+3. the number of defeated  monsters -> based on room cleared
+4. plus 300 point if finding the dungeon exist
+5. return result
+*/
+double Dungeon::scoreCalculation() 
 {
     int room_cleared = getStatusAt(0);
 
@@ -3530,7 +3591,15 @@ double Dungeon::scoreCalculation() //tested
     return total_score;
     //save total_score and leader's name in "score board.txt"
 }
-void Dungeon::saveStats() //tested
+/*
+Algorithm will write the stats into stats.txt when game has ended
+1. open file stats.txt
+2. will write into stats.txt
+3. party members status, rooms cleared, gold remaining, treasues, monsters defeated, spaces explored, 
+and number of turns taken
+4. close file when done writing all stats in file
+*/
+void Dungeon::saveStats() 
 {
     ofstream fout;
     string filename = "stats.txt";
@@ -3543,7 +3612,7 @@ void Dungeon::saveStats() //tested
     //number of rooms cleared
     fout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    fout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
+    fout << "The amount of Gold remaining: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
     fout << "The treasures currently collected and held: ";
     for (int i=0; i<5; i++)
@@ -3584,7 +3653,13 @@ void Dungeon::saveStats() //tested
     fout.close();
     return;
 }
-void Dungeon::saveScore() //tested
+/*
+Algorithm will save write score into score.txt when game has ended
+1. will open file score.txt
+2. will write in the score that was calculated using scoreCalculation function
+3. close file
+*/
+void Dungeon::saveScore()
 {
     ofstream fout;
     string filename = "score.txt";
@@ -3594,7 +3669,15 @@ void Dungeon::saveScore() //tested
     fout.close();
     return;
 }
-void Dungeon::scoreBoard() //tested
+/*
+Algorithm will print out the score board from score.txt file
+1. open the file score.txt
+2. loop through each line while using split function used to get each line of each name and score
+3. store into an temp array that will then we stored in vector
+4. Score will be organized from highest to lowest
+5. loop through vector to print out scoreboard
+*/
+void Dungeon::scoreBoard()
 {
     //reading from score.txt
     ifstream fin;
