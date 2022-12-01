@@ -1,9 +1,8 @@
-// Dunegeon.cpp
+// Project 3 - Dungeon.cpp
 // CSCI 1300 Fall 2022
-// Author: Con Muangkod
-// Recitation: 100 – Keshavaiah Naidu
-// Project3
-// Partner: Thanh-Thanh Dao
+// Author: Thanh-Thanh Dao
+// Recitation: 112 - Raegan Rychecky
+// Partner: Con Muangkod
 
 #include <iostream> 
 #include <fstream>
@@ -16,6 +15,7 @@
 #include <math.h>
 
 using namespace std;
+
 // DEFAULT INITIALIZER //
 Dungeon::Dungeon() 
 {
@@ -1217,7 +1217,7 @@ void Dungeon::fightingSorcerer()
     else
     {
         int c =6; //level of sorcerer
-        cout << "You have defeated the Sorcerer! It's time to head out for the dungeon exist!" << endl;
+        cout << "You have defeated the Sorcerer! It's time to clear this room and escape the dungeon!!!" << endl;
         removeMonsterAt(sorcerer_index); //*****
         setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
         setNumDefeatedMonster(getNumDefeatedMonster()+1);
@@ -1980,7 +1980,7 @@ void Dungeon::merchant_ingredient()
         if(yesorno(yn))
         {
             setPartyGold((getPartyGold())-cost);
-            setPartyIngredient(ingre_amount);
+            setPartyIngredient(getPartyIngredient() + ingre_amount);
             cout << endl;
             inventoryUpdate();
         }
@@ -2202,7 +2202,7 @@ void Dungeon::merchant_weapon()
         {
             cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
             cout << "Please enter a positive integer, or 0 to cancel" << endl;
-            cout << "Note that you can only buy up to " << 5-getNumWeapon() << "  weapons becasue of limited capacity!" << endl;
+            cout << "Note that you can only buy up to " << 5-getNumWeapon() << " weapons becasue of limited capacity!" << endl;
             cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl;
             cin >> weapon;
         }
@@ -2791,7 +2791,7 @@ void Dungeon::roomOpen()
 {
     if (map_.isRoomLocation(map_.getPlayerRow(), map_.getPlayerCol()) == false)
     {
-        cout << "You have already openned this room!" << endl;
+        cout << "You have already opened this room!" << endl;
         cout << endl;
         return;
     }
