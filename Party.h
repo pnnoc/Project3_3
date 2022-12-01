@@ -18,15 +18,11 @@ using namespace std;
 class Party
 {
     public:
-        Party();//
-        // Party(int cookware[3], int treasure[5],int weapon[5], int gold, int ingredient, int armor);
-        // Party(int cookware[3], int treasure[5],int weapon[5], int gold, int ingredient, int armor);
+        // DEFAULT CONSTRUCTOR
+        Party();
 
-        //vector<Player> addPlayer(vector<Player> party, Player player); //using push_back to the vector of players // not sure about the argument
-        // void addPlayer(Player player); 
-        // void removePlayer();
-
-        void setGold(int gold); //modifying the updated gold
+        // SETTERS
+        void setGold(int gold); 
         void setIngredient(int ingredient);
         void setIngredientPrice(int price); 
         void setArmor(int armor);
@@ -38,7 +34,7 @@ class Party
         void setWeaponAt(int index, int weapon);
         void setWeaponPriceAt(int index, int price);
 
-
+        // GETTERS
         int getArmor();
         int getArmorPrice();
         int getIngredient();

@@ -12,16 +12,20 @@
 
 using namespace std;
 
-// mayneed to use split function 
-
 class Monster
 {
     public:
-        Monster(); //not necessary?
+        // DEFAULT CONSTRUCTOR
+        Monster(); 
+
+        // PARAMERTERIZED CONSTRUCTOR
         Monster(string monster, int level);
+
+        // SETTERS 
         void setMonster(string monster);
         void setLevel(int level); 
 
+        // SETTERS
         string getMonName();
         int getLevel();
 

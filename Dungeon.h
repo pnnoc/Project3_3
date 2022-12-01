@@ -175,4 +175,3 @@ class Dungeon
         //Note! modifying each element by using their own class functions
 };
 #endif
-

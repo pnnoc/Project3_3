@@ -8,12 +8,14 @@
 #include "Player.h"
 using namespace std;
 
+// PARAMERTERIZED CONSTRUCTOR
 Player::Player(string name)
 {
     name_ = name; 
     fullness_ = 50;
 }
 
+// GETTERS
 string Player::getName()
 {
     return name_;
@@ -24,6 +26,7 @@ int Player::getFullness()
     return fullness_;
 }
 
+// SETTERS
 void Player::setName(string name)
 {
     name_ = name;

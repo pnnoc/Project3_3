@@ -14,12 +14,15 @@ using namespace std;
 class Player 
 {
     public:
-        //Player(); // not neccessary 
-        Player(string name); // initially put fullness = 50
+        // Player(); // not neccessary 
+        // PARAMERTERIZED CONSTRUCTOR
+        Player(string name); 
         
+        // GETTERS
         string getName();
         int getFullness();
 
+        // SETTERS
         void setName(string);
         void setFullness(int fullness); //dereasing after turns and fighting //what should be the argument
 

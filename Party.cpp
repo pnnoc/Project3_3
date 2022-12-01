@@ -12,6 +12,7 @@
 
 using namespace std;
 
+// DEFAULT CONSTRUCTOR 
 Party::Party()
 {
     //vector<Player> members_; //setting an empty vector of player
@@ -84,94 +85,116 @@ Party::Party()
     ingredient_[1] = 1; //initial prize of ingredient
     armor_[0] = 0;
     armor_[1] = 5; //initial price of suit armor
-    //num_player_=0;
 }
-void Party::setGold(int gold) //passed
+
+// SETTERS 
+void Party::setGold(int gold)
 {
     gold_ = gold;
 }
-void Party::setArmor(int armor) //passed
+
+void Party::setArmor(int armor) 
 {
     armor_[0] = armor;
 }
+
 void Party::setArmorPrice(int price)
 {
     armor_[1] = price;
 }
-void Party::setIngredient(int ingredient) //passed
+
+void Party::setIngredient(int ingredient) 
 {
     ingredient_[0] = ingredient;
 }
+
 void Party::setIngredientPrice(int price)
 {
     ingredient_[1] = price;
 }
-void Party::setTreasureAt(int i, int treasure) //passed
+
+void Party::setTreasureAt(int i, int treasure) 
 {
     treasure_[i][0] = treasure;
 }
+
 void Party::setTreasurePriceAt(int i, int price)
 {
     treasure_[i][1] = price;
 }
-void Party::setCookwareAt(int i, int cookware) //passed
+
+void Party::setCookwareAt(int i, int cookware) 
 {
     cookware_[i][0] = cookware;
 }
+
 void Party::setCookwarePriceAt(int i, int price)
 {
     cookware_[i][1] = price;
 }
-void Party::setWeaponAt(int i, int weapon) //passed
+
+void Party::setWeaponAt(int i, int weapon) 
 {
     weapon_[i][0] = weapon; 
 }
+
 void Party::setWeaponPriceAt(int i, int price)
 {
     weapon_[i][1] = price;
 }
 
+// GETTERS 
 
 int Party::getArmor()
 {
     return armor_[0];
 }
+
 int Party::getArmorPrice()
 {
     return armor_[1];
 }
+
 int Party::getGold()
 {
     return gold_;
 }
+
 int Party::getIngredient()
 {
     return ingredient_[0];
 }
+
 int Party::getIngredientPrice()
 {
     return ingredient_[1];
 }
+
 int Party::getTreasureAt(int i)
 {
     return treasure_[i][0];
 }
+
 int Party::getTreasurePriceAt(int i)
 {
     return treasure_[i][1];
 }
+
 int Party::getCookwareAt(int i)
 {
     return cookware_[i][0];
 }
+
 int Party::getCookwarePriceAt(int i)
 {
     return cookware_[i][1];
 }
+
 int Party::getWeaponAt(int i)
 {
     return weapon_[i][0];
 }
+
 int Party::getWeaponPriceAt(int i)
 {
     return weapon_[i][1];

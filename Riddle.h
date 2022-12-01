@@ -14,12 +14,17 @@ using namespace std;
 class Riddle
 { 
     public: 
+        // DEFAULT CONSTRUCTOR 
         Riddle(); 
+
+        // PARAMERTERIZED CONSTRUCTOR
         Riddle(string question, string answer);
 
+        // GETTERS 
         string getQuestion();
         string getAnswer();
 
+        // SETTERS
         void setQuestion(string question);
         void setAnswer(string answer);
 

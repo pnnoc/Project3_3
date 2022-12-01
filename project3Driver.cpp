@@ -27,9 +27,10 @@ int main()
     game1.start();
     game1.mainGame();
     game1.endGame();
-    //game1.saveStats();
-    //game1.saveScore();
-    //game1.scoreBoard();
+    game1.saveStats();
+    game1.saveScore();
+    game1.scoreBoard();
+
     
 
      
