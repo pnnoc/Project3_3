@@ -1393,7 +1393,7 @@ void Dungeon::normalSpaceInvestigate() // using members_erase for removeing imme
             }
             else if (fight_surr=="2")
             {
-                cout << "The monster is too strong! It's ok to surrender. You party will win next time!!!" << endl;
+                cout << "The monster is too strong! It's ok to surrender. Your party will win next time!!!" << endl;
                 int index = rand()%(getNumPlayer()-1) + 1; //gonna give the range that exclude 0. For example, if num_player=5 -> rand()%4+1 will be 1-4.
                 cout  << getPlayerAt(index).getName() << " has been held captive by the monster! You must continue without them!" << endl;
                 members_.erase(members_.begin()+index);
@@ -1406,7 +1406,7 @@ void Dungeon::normalSpaceInvestigate() // using members_erase for removeing imme
             bool isFullnessDecrease = probability(50);
             if (isFullnessDecrease==true)
             {
-                cout << "You party's fullness has dropped by 1 after fighting a monster." << endl;
+                cout << "Your party's fullness has dropped by 1 after fighting a monster." << endl;
                 for (int i=0; i< getNumPlayer(); i++) //this does not mean that it's 0 becasue monster kill them -> so it's considered death by hunger
                 {//****this loop give out of range
                     if (getFullnessAt(i)>0)
@@ -1422,7 +1422,7 @@ void Dungeon::normalSpaceInvestigate() // using members_erase for removeing imme
             bool isFullnessDecrease = probability(50);
             if (isFullnessDecrease==true)
             {
-                cout << "You party's fullness has dropped by 1 after investigating this space." << endl;
+                cout << "Your party's fullness has dropped by 1 after investigating this space." << endl;
                 for (int i=0; i< getNumPlayer(); i++)
                 {
                     if (getFullnessAt(i)>0)
