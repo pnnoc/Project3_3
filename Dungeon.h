@@ -1,8 +1,7 @@
-// Dunegeon.h
+// Project3 - Dunegeon.h
 // CSCI 1300 Fall 2022
 // Author: Con Muangkod
-// Recitation: 100 – Keshavaiah Naidu
-// Project3
+// Recitation: 100 – Ojasvi Bhalerao
 // Partner: Thanh-Thanh Dao
 
 #ifndef DUNGEON_H
@@ -23,12 +22,7 @@ class Dungeon
     
         Dungeon();
         Dungeon(Party party); //must initialize party before creating the dungeon class 
-        //Dungeon(Party group, vector<Monster> mons);
-        //Dungeon(Party group, vector<Monster> mons, vector<Riddle> riddles, Map map); //not sure
         void start(); //creating the map, placing rooms, NPC, etc + buying stuff
-
-
-        //(vector<player> members, Party party, vector<Mons>, vector<riddle>, status[4], map, num player)
 
         //Players
         void addPlayer(Player player);
@@ -97,8 +91,6 @@ class Dungeon
         bool getGiveup();
         void setGiveup(bool giveup);
 
-
-
         //other functions
         bool isInputInteger(string);
         bool probability(int prob_percent); //to calculate whether the action is yes/no true/false
@@ -135,16 +127,12 @@ class Dungeon
 
         void mainRoom();
         void printRoomActions();
-        //void room_move(); //share movefunction
         void roomOpen();
-        //void room_giveup(); //probably dont need this
 
         void misfortuneRoom(); //40% chance to happen
         //there is also probability in the misfortune
         //gonna be used after the SpaceAction and RoomAction
         void misfortuneNormal();
-
-        //Note! maybe having the function that includes sub level menu. For example,  SPACE = printAction -> sub choices action1-5. or MERCHANT = printMerchant -> sub items player wanna buy
 
         void mainGame();
         void endGame();
@@ -170,8 +158,7 @@ class Dungeon
         Map map_;
         int status_[4]; // {room cleared, keys, anger level, turns}
         bool giveup_;
-        //vector of num_turn in each game to be sorted later***
-
         //Note! modifying each element by using their own class functions
 };
 #endif
+

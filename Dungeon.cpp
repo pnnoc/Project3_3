@@ -1,23 +1,24 @@
-// Project 3 - Dungeon.cpp
+// Project3 - Dunegeon.cpp
 // CSCI 1300 Fall 2022
-// Author: Thanh-Thanh Dao
-// Recitation: 112 - Raegan Rychecky
-// Partner: Con Muangkod
+// Author: Con Muangkod
+// Recitation: 100 – Ojasvi Bhalerao
+// Partner: Thanh-Thanh Dao
 
 #include <iostream> 
 #include <fstream>
 #include <vector>
 #include <string>
-#include <cctype> 
+#include <cctype>
 #include "Dungeon.h"
-#include <ctime> 
+#include <ctime>
 #include <cstdlib>
 #include <math.h>
+#include <unistd.h>
 
 using namespace std;
 
-// DEFAULT INITIALIZER //
-Dungeon::Dungeon() 
+//DEFAULT CONSTRUCTOR//
+Dungeon::Dungeon()
 {
     for (int i=0; i< 4; i++)
     {
@@ -41,7 +42,7 @@ and add rooms.
 5. Inventory will be printed so user can see their inventory 
 6. Monsters and Riddles will be populated before main game as well
 */
-void Dungeon::start() 
+void Dungeon::start()
 {
     map_.resetMap(); //setting X at the origin (player's position) + setting the Exit att the middle of the last row
     //adding rooms
@@ -49,23 +50,19 @@ void Dungeon::start()
     {
         int row = rand()%(map_.getNumRows()-1); // randomize the number of row from 0-10 (we dont want the last row)
         int col = rand()%(map_.getNumCols()-1); // randomize the number of col from 0-10 (we dont want the last row)
-        //cout << row << "," << col << endl;
         map_.addRoom(row,col); //checking freeSpace is already in this function also room_count++
     }
     //adding NPCs
-    // cout << map_.getNPCCount() << endl;
-    // cout << map_.getMaxNpcs() << endl;
     while (map_.getNPCCount() < 5) //map_.getMaxNpcs()
     {
         int row = rand()%(map_.getNumRows()-1); // randomize the number of row from 0-10 (we dont want the last row)
         int col = rand()%(map_.getNumCols()-1); // randomize the number of col from 0-10 (we dont want the last row)
-        //cout << row << "," << col << endl;
         map_.addNPC(row,col); //checking freeSpace is already in this function also npc_count++.
     }
     map_.displayMap();
 
     cout << endl;
-    // //populating members vector
+    //populating members vector
     cout << "Type the name of each player in your team! " << endl << "You can only type one name at a time (then hit enter)" << endl;
     do
     {
@@ -97,6 +94,7 @@ void Dungeon::start()
     //populating vector of monster
     string mon_filename = "monsters.txt";
     readMonster(mon_filename);
+    //cout << getNumMonster() << endl; 
     //populating vector of riddles
     string rid_filename = "riddles.txt";
     readRiddle(rid_filename);
@@ -183,7 +181,7 @@ each player can only have one weapon
 2. continue to randomly select a weapon to remove until it is less than or equal to
 3. print out which weapon the user will be losing in game
 */
-void Dungeon::removeWeapon() //need checking
+void Dungeon::removeWeapon()
 {
     while (getNumWeapon()>getNumPlayer())
     {
@@ -469,7 +467,6 @@ bool Dungeon::ishaveMonLevel(int mon_level)
             break;
         }
     }
-
     return haveMon;
 }
 
@@ -498,7 +495,6 @@ void Dungeon::readRiddle(string filename)
             {
                 riddle_read.setQuestion(line.substr(0,i));
                 riddle_read.setAnswer(line.substr(i+1)); //i+1 becasue we dont want separator
-                //riddle_vec.push_back(riddle_read);
                 riddles_.push_back(riddle_read);
                 break;
             } 
@@ -584,7 +580,7 @@ bool Dungeon::isInputInteger(string input)
     return isValid;
 }
 // Algorithm will return the whole inventory status that player currently has in game
-void Dungeon::inventoryUpdate() 
+void Dungeon::inventoryUpdate()
 {
     cout << "INVENTORY | " << endl;
     cout << "Gold | " << getPartyGold() << endl;
@@ -596,12 +592,12 @@ void Dungeon::inventoryUpdate()
     return;
 }
 // Algorithm will return each player's name and their fullness
-void Dungeon::partyUpdate() 
+void Dungeon::partyUpdate()
 {
     cout << "PARTY | " << endl;
     for (int i=0; i < getNumPlayer(); i++)
     {
-        cout << getPlayerAt(i).getName() << " | " << "Fullness: " << getPlayerAt(i).getFullness() << endl; 
+        cout << getPlayerAt(i).getName() << " | " << "Fullness: " << getPlayerAt(i).getFullness() << endl; //getPlayerAt(i).getFullness() = getFullnessAt(i)
     }
     return;
 }
@@ -614,7 +610,7 @@ Algorithm will calculate the probability of an event occuring
 */
 bool Dungeon::probability(int prob_percent)
 {
-    int random = rand()%100 + 1; //giving number between 1-100
+    int random = rand()%100 + 1; //giveing number between 1-100
     // 10% to occur -> yes (1-10), no (11-100)
     if (random <= prob_percent)
     {
@@ -652,7 +648,7 @@ bool Dungeon::yesorno(string yn) //for buying from merchant
     return check;
 }
 // Algorithm will print out status along with inventory and party
-void Dungeon::statusUpdate() //done
+void Dungeon::statusUpdate()
 {
     cout << "STATUS | " << endl;
     cout << "Rooms Cleared: " << getStatusAt(0) << " | Keys: " << getStatusAt(1) << " | Anger Level: " << getStatusAt(2) << " | Number of steps: " << getStatusAt(3) << endl;
@@ -699,22 +695,30 @@ Algorithm will show instructions for moving each space
 3. move user if in bound and correct char is used
 4. increment turns and anger level 
 */
-void Dungeon::moveAction() 
+void Dungeon::moveAction()
 {
     bool loop = false;
     while (!loop)
     {
-        cout << "Let's move to another space!!!" << endl << "Here are the options for making a move!" << endl << "'w' to move up" << endl << "'s' to move down" << endl << "'a' to move left" << endl << "'d' to move rightt" << endl;
-        char move_input; //give error easily using char -> using string is easier but have to implement move function
+        cout << "Let's move to another space!!!" << endl << "Here is instruction for making a move!" << endl << "'w' to move up" << endl << "'s' to move down" << endl << "'a' to move left" << endl << "'d' to move rightt" << endl;
+        char move_char; //give error easily using char -> using string is easier but have to implement move function
+        string move_input;
         cin >> move_input;
-        while (!(move_input=='w' || move_input=='W' || move_input=='s' || move_input=='S' || move_input=='a' || move_input=='A' || move_input=='d' || move_input=='D') || cin.fail()) //***fail in case of inputting string "clear", it will go through the loop 3 time before reading 'a' as option for moving
+        bool check = false;
+        while (move_input.length()!=1 || check==false) //using input as a string first for the validation then can convert string into char that will be input in MOVE function
         {
-            cin.clear();
-            cin.ignore(500,'\n'); 
-            cout << "You can use only 'w', 's', 'a', and 'd' for moving!" << endl;
-            cin >> move_input;
-        }
-        bool move_return = map_.move(move_input);
+            if(!(move_input=="w" || move_input=="W" || move_input=="s" || move_input=="S" || move_input=="a" || move_input=="A" || move_input=="d" || move_input=="D"))
+            {
+                cout << "You can use only 'w', 's', 'a', and 'd' for moving!" << endl;
+                cin >> move_input;
+            }
+            else
+            {
+                check = true;
+            }
+        }//this whole loop will make sure that the input will be able to invert into char of w, s, a, or d
+        move_char = move_input[0];
+        bool move_return = map_.move(move_char);
         if (move_return==false)
         {
             cout << "You're moving out of the range!" << endl;
@@ -725,7 +729,6 @@ void Dungeon::moveAction()
             {
                 setStatusAt(3, getStatusAt(3)+1); //+1 number of turns when the new space is not already expored
             }
-
             //increment anger level (for every single move)
             setStatusAt(2, getStatusAt(2)+1);
             loop = true;
@@ -744,22 +747,22 @@ Algorithm will determine if party can fight mosnter, if so, will calculate if th
 7. if they lose, they lose gold and ingredients. They may also lose a teammate depending on the # of armor they have
 8. if player dies, armor and weapon will be updated
 */
-void Dungeon::fightingMonster() 
+void Dungeon::fightingMonster()
 {
     //validation check for the number of weapon and armor
     if (!(getNumWeapon()>0 && getPartyArmor() >0))
     {
         if (getNumWeapon()==0 && getPartyArmor()>0)
         {
-            cout << "You don't have any weapons to fight the monster." << endl;
+            cout << "You don't have any weapon to fight a monster." << endl;
         }
         else if (getNumWeapon()>0 && getPartyArmor()==0)
         {
-            cout << "You don't have any armor to protect your team w henfighting the monster." << endl;
+            cout << "You don't have any armor to protect your team fighting a monster." << endl;
         }
         else if (getNumWeapon()==0 && getPartyArmor()==0)
         {
-            cout << "You don't have any weapons or armor to fight the monster!" << endl;
+            cout << "You don't have amy weapon and armor to fight a monster." << endl;
         }
         cout << "Please choose another option!" << endl;
         return;
@@ -768,7 +771,7 @@ void Dungeon::fightingMonster()
     int mon_level = getStatusAt(0)+1; //mon_level = 1 fightign before clearing room 1,.., thus clearing 5 rooms will get mon_level = 6 which is the sorceror
     if(!ishaveMonLevel(mon_level)) //does not have mon
     {
-        cout << "You have defeated all the monsters of level " << mon_level << " !!!" << endl;
+        cout << "You have defeated all monsters of level " << mon_level << " !!!" << endl;
         return; //terminate the function as soon as there is no monster of this level left.
     }
 
@@ -795,7 +798,6 @@ void Dungeon::fightingMonster()
     int c = mon_level;
     int a = getPartyArmor();
 
-    //caldulating d is a problem (not sure if below code will correct -> logically)
     bool unique_weapon = true;
     for (int i=0; i<5; i++) //max num of weapon type = 5. Depending on the number of player 5 players have 5 different weapons, similary, 3 players must have 3 different weapons
     {//meaning that the number of weapon for each type has to be one for the party to have unique weapon
@@ -811,6 +813,11 @@ void Dungeon::fightingMonster()
     }
     //if not it's 0 by the definition (already initialized to 0 at the beginning)
 
+    cout << endl;
+    cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+    cout << endl;
+    sleep(5);
+
     //outcome condition
     int cal_outcome = ((r1*w)+d)-((r2*c)/a);
     if (cal_outcome>0)
@@ -819,16 +826,14 @@ void Dungeon::fightingMonster()
         setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
         setNumDefeatedMonster(getNumDefeatedMonster()+1);
         cout << "You did it!!! You have defeated the monster!!!" << endl;
-        //party_.setGold(party_.getGold()+(10*c));
         setPartyGold(getPartyGold() + (10*c));
-        cout << "You recieved " << 10*c << " gold as a prize!" << " (" << getPartyGold() << " in total)" << endl;
-        //party_.setIngredient(party_.getIngredient())
+        cout << "You recieve " << 10*c << " golds as a prize!" << " (" << getPartyGold() << " in total)" << endl;
         setPartyIngredient(getPartyIngredient() + (5*c));
-        cout << "You recieved " << 5*c << " kg ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
+        cout << "You recieve " << 5*c << " ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
         bool isKey = probability(10);
         if (isKey==true)
         {
-            cout << "Wait! The monster dropped a key! Lucky you!" << endl;
+            cout << "Wait! The monster dropped the key! Lucky you!" << endl;
             setStatusAt(1, getStatusAt(1)+1); //status[1] = key
             cout << "You currently have " << getStatusAt(1) << " key(s)" << endl;
         }
@@ -836,7 +841,7 @@ void Dungeon::fightingMonster()
     else
     {
         //not removing monster
-        //NOTE not adding number of defeated monsters
+        //NOTE not adding number of defeated monstes
         cout << "The monster is too strong! You've lost the fight." << endl;
         //losing gold
         int gold_remained = getPartyGold()*0.75;
@@ -845,12 +850,12 @@ void Dungeon::fightingMonster()
         //losing ingredient
         if (getPartyIngredient()<=30) //losing ingredient up to 30. This means that having less than 30 will have 0 remained
         {
-            cout << "You have lost all the your ingredients." << endl;
+            cout << "You have lost all the ingredient." << endl;
             setPartyIngredient(0);
         }
         else
         {
-            cout << "You have lost 30 kg ingredients" << endl;
+            cout << "You have lost 30 ingredients" << endl;
             setPartyIngredient(getPartyIngredient()-30); //having more than 30 will be substracted by 30
         }
         //losing member
@@ -881,7 +886,8 @@ void Dungeon::fightingMonster()
                 }
             }
         }
-        removeWeapon(); //always checks after losing player
+        removeWeapon(); //akways checks after losing player
+        removeArmor();
     }
     return;
 }
@@ -891,7 +897,7 @@ Algorithm will determine if user really wants to give up
 2. if user inputs y/Y, will call setGiveup function and set as true to end game
 3. if user inputs n/N, game will continue
 */
-void Dungeon::giveUp() 
+void Dungeon::giveUp()
 {
     cout << "I understand that escaping this dungeon is not easy, but do you really want to give up? (y/n)" << endl;
     string yn;
@@ -908,7 +914,7 @@ void Dungeon::giveUp()
     }
     else if (yn == "n" || yn == "N")
     {
-        cout << "I knew you still had courage left in you! Let's escape the dungeon!!!" << endl;
+        cout << "I knew that you wouldn't give up so easily!!!" << endl;
     }
     return;
 }
@@ -926,15 +932,16 @@ bool Dungeon::hungerWarning() //this one has to be at the beginning of each turn
     {
         if (getFullnessAt(i)<=1)
         {
-            cout << "Warning: " << getPlayerAt(i).getName() << " is on the blink of starvation!" << endl << "You should cook and eat some food now!!" << endl;
+            cout << "Warning: " << getPlayerAt(i).getName() << " is on the blink of starvation!" << endl << "You should cook and eat some food!" << endl;
             isWarning = true;
         }
     }
     return isWarning;
 }
 // Algorithm will return the number of spaces explored
-int Dungeon::getNumExplored() 
+int Dungeon::getNumExplored()
 {
+
     int num_explored = 0;
     for (int i=0; i<12; i++)//row
     {
@@ -960,19 +967,19 @@ Algorithm occurs when user has reached the final battle against the sorcerer
 8. will check each player's fullness to determine if any teammates have been lost
 9. once sorcerer dies, the party can escape the dungeon
 */
-void Dungeon::fightingSorcerer() 
+void Dungeon::fightingSorcerer() //not done
 {
     cout << "You have come to the last boss SORCERER!!! This battle will determine the fate of your party!!!" << endl;
     cout << endl;
 
     //giving the desription of fighting sorceror
-    cout << "The Sorcerer is stronger than normal monsters you have fought. Sorcerer has fullness at 150 which is separated into 3 phases, 50 each." << endl;
-    cout << "The Sorcerer will be angrier and more difficult to defeat each phase you have entered!" << endl;
+    cout << "Sorcerer is stronger than normal monsters you have fought. Sorcerer has fullness at 150 which is separated into 3 phases, 50 each." << endl;
+    cout << "Sorcerer will be angrier and more difficult to defeat each phase you have entered!" << endl;
     cout << endl;
     //getting pet monster to be part of your team (same as player)
     if (getNumPlayer()<3)
     {
-        cout << "Lucky for you! You have found a monster pet (Vega) that can help you fight the Sorcerer!" << endl << "However, to catch them, you have answer their question!" << endl;
+        cout << "Lucky for you! You have found a monster pet (Vega) that can help you fight the sorcerer!" << endl << "However, to catch them, you have to convince and answer their question!" << endl;
         int riddle_index = rand()%getNumRiddle();
         string riddle_ans;
         cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
@@ -981,7 +988,7 @@ void Dungeon::fightingSorcerer()
         cout << endl;
         if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
         {
-            cout << "You got the corrected answer! Vega is willing to help you fight and be part of your team!" << endl;
+            cout << "You have got the corrected answer! Vega is willing to help you fight and be part of your team!" << endl;
             cout << endl;
             Player mon_pet("Vega");
             addPlayer(mon_pet);
@@ -990,15 +997,20 @@ void Dungeon::fightingSorcerer()
         }
         else
         {
-            cout << "You got the wrong answer? You have lost Vega!!!" << endl;
+            cout << "You have got the wrong answer? You have lost Vega!!!" << endl;
         }
         //moving the riddle out opf the vector
         removeRiddleAt(riddle_index);
         setNumRiddle(); // just in case
     }
 
-    cout << "You have one last chance to prepare you team for this legendary battle! Gather as many items as possible to increase your fate of survival!!" << endl;
+    cout << "You have one last chance to prepare you team for this legend battle! Let's gather items needed from the merchant!" << endl;
     mainMerchant();
+
+    cout << endl;
+    cout << endl;
+    cout << "LET'S START THE BATTLE!!!" << endl;
+    cout << endl;
     cout << endl;
 
     int sorcerer_fullness = 150;
@@ -1006,16 +1018,24 @@ void Dungeon::fightingSorcerer()
     {
         if (sorcerer_fullness>=100) //phase 1
         {
-            cout << "Phase 1" << endl;
+            cout << "PHASE 1" << endl;
+            cout << endl;
+            cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+            cout << endl;
+            sleep(5);
             //calculating attacking score for the party
             int damage = attackingScore();
-            cout << "You have done " << damage << " points of damage to the Sorcerer!" << endl;
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
             sorcerer_fullness -= damage;
             cout << endl;
             //probability of attack again
             if (probability(30))
             {
-                cout << "You got luck and can double attack!!!" << endl;
+                cout << "You got luck and can do double attack!!!" << endl;
+                cout << endl;
+                cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+                cout << endl;
+                sleep(5);
                 int double_damage = attackingScore();
                 cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
                 sorcerer_fullness -= double_damage;
@@ -1024,7 +1044,7 @@ void Dungeon::fightingSorcerer()
 
             //calculating damage doe by sorceror to the party
             int rand_damage = rand()%3+1; //specific to this phase (1-3)
-            cout << "The Sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
             cout << endl;
             for (int i=0; i<getNumPlayer(); i++)
             {
@@ -1038,11 +1058,11 @@ void Dungeon::fightingSorcerer()
                 }
             }
 
-            //findingn potion for increasing fullness
+            //findingn portion for increasing fullness
             if(probability(10))
             {
                 int rand_healing = rand()%3+1;
-                cout << "You have found a potion that helps increase your party's fullness by " << rand_healing << endl;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
                 for (int i=0; i<getNumPlayer(); i++)
                 {
                     setFullnessAt(i, getFullnessAt(i)+rand_healing);
@@ -1051,26 +1071,34 @@ void Dungeon::fightingSorcerer()
         }
         else if (sorcerer_fullness>=50) // phase2
         {
-            cout << "Phase 2" << endl;
+            cout << "PHASE 2" << endl;
+            cout << endl;
+            cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+            cout << endl;
+            sleep(5);
             //calculating attacking score for the party
             int damage = attackingScore();
-            cout << "You have done " << damage << " points of damage to the Sorcerer!" << endl;
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
             sorcerer_fullness -= damage;
     
             cout << endl;
             //probability of attack again
             if (probability(25) && sorcerer_fullness!=0)
             {
-                cout << "You got lucky and can double attack!!!" << endl;
+                cout << "You got luck and can do double attack!!!" << endl;
+                cout << endl;
+                cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+                cout << endl;
+                sleep(5);
                 int double_damage = attackingScore();
-                cout << "You have done " << double_damage << " points of damage to the Sorcerer!" << endl;
+                cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
                 sorcerer_fullness -= double_damage;
             }
             cout << endl;
 
             //calculating damage doe by sorceror to the party
             int rand_damage = rand()%3+3; //specific to this phase (3-5)
-            cout << "The Sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
             cout << endl;
             for (int i=0; i<getNumPlayer(); i++)
             {
@@ -1084,11 +1112,11 @@ void Dungeon::fightingSorcerer()
                 }
             }
 
-            //findingn potion for increasing fullness
+            //findingn portion for increasing fullness
             if(probability(20))
             {
                 int rand_healing = rand()%3+1;
-                cout << "You have found a potion that helps increase your party's fullness by " << rand_healing << endl;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
                 for (int i=0; i<getNumPlayer(); i++)
                 {
                     setFullnessAt(i, getFullnessAt(i)+rand_healing);
@@ -1097,10 +1125,14 @@ void Dungeon::fightingSorcerer()
         }
         else if (sorcerer_fullness>=0) //phase 3
         {
-            cout << "Phase 3" << endl;
+            cout << "PHASE 3" << endl;
+            cout << endl;
+            cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+            cout << endl;
+            sleep(5);
             //calculating attacking score for the party
             int damage = attackingScore();
-            cout << "You have done " << damage << " points of damage to the Sorcerer!" << endl;
+            cout << "You have done " << damage << " points of damage to the sorcerer!" << endl;
             if(sorcerer_fullness>damage)
             {
                 sorcerer_fullness -= damage;
@@ -1115,9 +1147,13 @@ void Dungeon::fightingSorcerer()
             //probability of attack again
             if (probability(20))
             {
-                cout << "You got lucky and can double attack!!!" << endl;
+                cout << "You got luck and can do double attack!!!" << endl;
+                cout << endl;
+                cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+                cout << endl;
+                sleep(5);
                 int double_damage = attackingScore();
-                cout << "You have done " << double_damage << " points of damage to the Sorcerer!" << endl;
+                cout << "You have done " << double_damage << " points of damage to the sorcerer!" << endl;
                 if(sorcerer_fullness>double_damage)
                 {
                     sorcerer_fullness -= double_damage;
@@ -1132,7 +1168,7 @@ void Dungeon::fightingSorcerer()
 
             //calculating damage doe by sorceror to the party
             int rand_damage = rand()%3+5; //specific to this phase (5-7)
-            cout << "The Sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
+            cout << "The sorcerer has fought back!!! Your party's fullness has decreased by " << rand_damage << endl;
             cout << endl;
             for (int i=0; i<getNumPlayer(); i++)
             {
@@ -1146,15 +1182,27 @@ void Dungeon::fightingSorcerer()
                 }
             }
 
-            //findingn potion for increasing fullness
+            //findingn portion for increasing fullness
             if(probability(30))
             {
                 int rand_healing = rand()%3+1;
-                cout << "You have found a potion that helps increase your party's fullness by " << rand_healing << endl;
+                cout << "You have found a portion that helps increasing your party fullness by " << rand_healing << endl;
                 for (int i=0; i<getNumPlayer(); i++)
                 {
                     setFullnessAt(i, getFullnessAt(i)+rand_healing);
                 }
+            }
+        }
+
+        for (int i=1; i<getNumPlayer(); i++) //starting at index 1 becasue we dont want to remove the leader from the party when their fullness decreases to 0
+        {
+            if (getFullnessAt(i)<=0)
+            {
+                cout << "You have lost " << getPlayerAt(i).getName() << " after the battle." << endl;
+                members_.erase(members_.begin()+i);
+                removeWeapon();
+                setNumPlayer();
+                removeArmor();
             }
         }
 
@@ -1166,17 +1214,6 @@ void Dungeon::fightingSorcerer()
             return;
         }
 
-        for (int i=0; i<getNumPlayer(); i++)
-        {
-            if (getFullnessAt(i)<=0)
-            {
-                cout << "You have lost " << getPlayerAt(i).getName() << " after the battle." << endl;
-                members_.erase(members_.begin()+i);
-                removeWeapon();
-                setNumPlayer();
-                removeArmor();
-            }
-        }
         //party / sorcerer update
         partyUpdate();
         cout << "Sorcerer: " << sorcerer_fullness << endl;
@@ -1196,48 +1233,45 @@ void Dungeon::fightingSorcerer()
 
     if (sorcerer_fullness>0 || getFullnessAt(0)==0 || getNumPlayer()<2) //meaning that the party has lost
     {
+        //not removing monster
+        //NOTE not adding number of defeated monstes
         cout << "The Socerer is too strong! You've lost the fight." << endl;
         //losing gold
         cout << endl;
         int gold_remained = getPartyGold()*0.75;
         setPartyGold(gold_remained);
-        cout << "You lost some gold " << getPartyGold() << " gold remain." << endl;
+        cout << "You lost some gold " << getPartyGold() << " golds are remained." << endl;
         //losing ingredient
         if (getPartyIngredient()<=30) //losing ingredient up to 30. This means that having less than 30 will have 0 remained
         {
-            cout << "You have lost all your ingredients." << endl;
+            cout << "You have lost all the ingredient." << endl;
             setPartyIngredient(0);
         }
         else
         {
-            cout << "You have lost 30 kg of ingredients" << endl;
+            cout << "You have lost 30 ingredients" << endl;
             setPartyIngredient(getPartyIngredient()-30); //having more than 30 will be substracted by 30
         }
     }
     else
     {
         int c =6; //level of sorcerer
-        cout << "You have defeated the Sorcerer! It's time to clear this room and escape the dungeon!!!" << endl;
-        removeMonsterAt(sorcerer_index); //*****
+        cout << "You have defeated the sorcerer! It's time to head out for the dungeon exist!" << endl;
+        removeMonsterAt(sorcerer_index); 
         setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
         setNumDefeatedMonster(getNumDefeatedMonster()+1);
         setPartyGold(getPartyGold() + (10*c));
-        cout << "You recieved " << 10*c << " gold as a prize!" << " (" << getPartyGold() << " in total)" << endl;
+        cout << "You recieve " << 10*c << " golds as a prize!" << " (" << getPartyGold() << " in total)" << endl;
         setPartyIngredient(getPartyIngredient() + (5*c));
-        cout << "You recieved " << 5*c << " kg of ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
+        cout << "You recieve " << 5*c << " ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
     }
-    
     cout << endl;
     return;
 }
-// NORMAL //
 /*
-Algorithm will show menu of what user can do (move, investigate, cook/eat, pick a fight, or give up)
-1. accept user input as string
-2. check string with isInputInteger function
-3. if false, ask for user input again
-4. otherwise, will convert user option to integer and go to option user has chosen
-5. every move, user has 20% chance of losing fullness by 1
+1. take information of weapons, armor, etc into the fighting calculation
+2. attacking score will be calculated (each time will be different becasue probability of r1 and r2 is differentt)
+3. return the attacking score that will be used in fightingSorcerer function
 */
 int Dungeon::attackingScore()
 {
@@ -1249,7 +1283,6 @@ int Dungeon::attackingScore()
     int c = 6;
     int a = getPartyArmor();
 
-    //caldulating d is a problem (not sure if below code will correct -> logically)
     bool unique_weapon = true;
     for (int i=0; i<5; i++) //max num of weapon type = 5. Depending on the number of player 5 players have 5 different weapons, similary, 3 players must have 3 different weapons
     {//meaning that the number of weapon for each type has to be one for the party to have unique weapon
@@ -1264,11 +1297,12 @@ int Dungeon::attackingScore()
         d=4;
     }
     //if not it's 0 by the definition (already initialized to 0 at the beginning)
-
     //outcome condition
     int cal_outcome = ((r1*w)+d)-((r2*c)/a);
     return cal_outcome;
 }
+
+// NORMAL SPACE//
 /*
 Algorithm will show menu of what user can do (move, investigate, cook/eat, pick a fight, or give up)
 1. accept user input as string
@@ -1277,7 +1311,7 @@ Algorithm will show menu of what user can do (move, investigate, cook/eat, pick 
 4. otherwise, will convert user option to integer and go to option user has chosen
 5. every move, user has 20% chance of losing fullness by 1
 */
-void Dungeon::mainNormalSpace()
+void Dungeon::mainNormalSpace() 
 {
     bool loop = true;
     while(loop)
@@ -1289,11 +1323,11 @@ void Dungeon::mainNormalSpace()
         cout << endl;
 
         bool isInputValid = false;
-        while (!isInputValid) 
+        while (!isInputValid)
         {
             while (isInputInteger(main)==false)
             {
-                cout << "Please enter an integer." << endl;
+                cout << "Please enter integer." << endl;
                 cin >> main;
             }
 
@@ -1311,7 +1345,7 @@ void Dungeon::mainNormalSpace()
         main_choice = stoi(main);
         switch (main_choice)
         {
-            case 1: //done but not checked
+            case 1:
                 //each player has a 20% chance of dropping fullness by 1
                 for (int i=0; i < getNumPlayer(); i++) //looping through each player in vector
                 {
@@ -1331,13 +1365,12 @@ void Dungeon::mainNormalSpace()
                 normalSpaceInvestigate();
                 break;
             case 3: 
-                //condiditon -> the number of monster (specific level corresponding to the room clears) cannot be 0; -> not sure if fightingMonster funnction already includes this condition
                 normalSpacePickfight();
                 break;
             case 4:
-                normalSpaceCookeat(); //done
+                normalSpaceCookeat(); 
                 break;
-            case 5: //passed
+            case 5: 
                 giveUp(); 
                 if(getGiveup()==true) //going out as soon as giving up
                 {
@@ -1353,9 +1386,9 @@ void Dungeon::mainNormalSpace()
 /*
 Algorithm will print out options user can do such as move, investigate, pick a fight, cook/eat, or give up
 */
-void Dungeon::printNormalSpaceActions()
+void Dungeon::printNormalSpaceActions() //done
 {
-    cout << "Here are things you can do! Choose wisely and the odds may be with you!" << endl;
+    cout << "Here are things you can do! Choose wisely and the luck will be yours!" << endl;
     cout << "1. Move" << endl << "2. Investigate" << endl << "3. Pick a fight" << endl << "4. Cook and Eat" << endl << "5. Give up" << endl;
     return;
 }
@@ -1369,14 +1402,14 @@ how close they are to the treasure, and mark the space as explored on the map
 5. let user know if they encountered a monster or not and ask user if they want to fight it, if they do run into one
 6. space will be marked as explored
 */
-void Dungeon::normalSpaceInvestigate() 
+void Dungeon::normalSpaceInvestigate() // using members_erase for removeing immediatetly instead of remove function becasue this will prevent remove() from removing player whose fullness at 0 because of hunger
 {
     if(!(map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol()))) //if it's not explored
-    {//dont forget to set this space to be explored at the end
+    {
         bool isKeyFound = probability(10);
         if (isKeyFound==true)
         {
-            cout << "You have found a key for the secret room!!! Keep it tight in your hand and try not to get it stolen!!!" << endl;
+            cout << "You have found a key for secret rooms!!! Keep it tight in your hand and try not to get it stolen!!!" << endl;
             setStatusAt(1, getStatusAt(1)+1); //index 1 of Status is the number of key
         }
         else
@@ -1422,8 +1455,7 @@ void Dungeon::normalSpaceInvestigate()
         bool isMonster = probability(20);
         if (isMonster==true && ishaveMonLevel(getStatusAt(0)+1)==true && getNumWeapon()>0 && getPartyArmor()>0)
         {
-            //******** You have defeated all the monster in this level
-            cout << "You have found a hostile monster!!! You may choose either to fight or surrender!!!" << endl;
+            cout << "You have found a hostile monster!!! You choose either to fight or surrender!!!" << endl;
             cout << "1. To Fight!!!" << endl << "2. To Surrender!!!" << endl;
             string fight_surr;
             cin >> fight_surr;
@@ -1440,7 +1472,7 @@ void Dungeon::normalSpaceInvestigate()
             {
                 //surrender function
                 //to lose one member that is not leader -> using rand() for finding the index that is not zero, setting their fullness to zero and use removePlayer
-                cout << "Monster is too strong! It's ok to surrender. Your party will win next time!!!" << endl;
+                cout << "Monster is too strong! It's ok to surrender. You party will win next time!!!" << endl;
                 int index = rand()%(getNumPlayer()-1) + 1; //gonna give the range that exclude 0. For example, if num_player=5 -> rand()%4+1 will be 1-4.
                 cout  << getPlayerAt(index).getName() << " has been held captive by the monster! You must continue without them!" << endl;
                 members_.erase(members_.begin()+index);
@@ -1452,9 +1484,9 @@ void Dungeon::normalSpaceInvestigate()
             bool isFullnessDecrease = probability(50);
             if (isFullnessDecrease==true)
             {
-                cout << "Your party's fullness has dropped by 1. (after fighting a monster)" << endl;
+                cout << "You party's fullness has dropped by 1. (after fighting a monster)" << endl;
                 for (int i=0; i< getNumPlayer(); i++) //this does not mean that it's 0 becasue monster kill them -> so it's considered death by hunger
-                {//****this loop give out of range
+                {
                     if (getFullnessAt(i)>0)
                     {
                         setFullnessAt(i, getFullnessAt(i)-1);
@@ -1465,11 +1497,11 @@ void Dungeon::normalSpaceInvestigate()
         }
         else //will go through this one if the party does not fight with monster
         {
-            cout << "Good for you! There is no monster in this space!" << endl;
+            cout << "Good luck for you! There is no monster in this space!" << endl;
             bool isFullnessDecrease = probability(50);
             if (isFullnessDecrease==true)
             {
-                cout << "Your party's fullness has dropped by 1. (after investigating a space.)" << endl;
+                cout << "You party's fullness has dropped by 1. (after investigating a space.)" << endl;
                 for (int i=0; i< getNumPlayer(); i++)
                 {
                     if (getFullnessAt(i)>0)
@@ -1501,41 +1533,40 @@ calculate party's new fullness
 distributed to all party members
 8. user will get to see the updated fullness, ingredients, and cookware (if it breaks or not)
 */
-void Dungeon::normalSpaceCookeat() 
+void Dungeon::normalSpaceCookeat()
 {
     //ingredient != 0 && numCookware != 0
     if (getPartyIngredient()<=0&&getNumCookware()<=0)
     {
-        cout << "We're so sorry, you don't have any ingredients or cookware for making food!" << endl;
+        cout << "We're so sorry, you don't have any ingredient and cookware for making food!" << endl;
         cout << endl;
         return;
     }
     else if (getPartyIngredient()>0&&getNumCookware()<=0)
     {
-        cout << "You have some ingredients! Sadly, you don't have any cookware to use." << endl;
+        cout << "You have some ingredient! Sadly, you don't have any cookware to use." << endl;
         cout << endl;
         return;
     }
     else if (getPartyIngredient()<=0&&getNumCookware()>0)
     {
-        cout << "You have some cookware! Sadly, you don't have any ingredients to use." << endl;
+        cout << "You have some cookwares! Sadly, you don't have any ingredient to use." << endl;
         cout << endl;
         return;
     }
-    // need both in order to cook
+    //only haveing both will not counter the previous return(s) = passed
 
     //prompting user to choose amount of ingredient
-    cout << "You have " << getPartyIngredient() << " kg of ingredients. The ratio of successful cooking is 1 fullness: 5 kg." << endl << "How much do you want to cook?" << endl;
+    cout << "You have " << getPartyIngredient() << " kg of ingredient. The ratio of successful cooking is 1 fullness: 5 kg." << endl << "How much do you want to cook?" << endl;
     int amount_ing;
     string ing;
     cin >> ing; 
-
     bool isInputValid = false;
         while (!isInputValid) 
         {
             while (isInputInteger(ing)==false)
             {
-                cout << "Please enter an integer." << endl;
+                cout << "Please enter integer." << endl;
                 cin >> ing;
             }
 
@@ -1556,13 +1587,13 @@ void Dungeon::normalSpaceCookeat()
         cout << endl;
         return;
     }
-
+    cout << endl;
     //promting user to choose cookware
     bool not_pass = true;
-    string cw;
+    string cw; //to be input
     while (not_pass)
     {
-        cout << "Here is the list of cookware types and ingredients avaiable to you!!" << endl;
+        cout << "Here is the list of your current cookware types and available amount!" << endl;
         cout << "1. Ceramic pot: " << getPartyCookwareAt(0) << " (25% chance of breaking)" << endl;
         cout << "2. Frying pan: " << getPartyCookwareAt(1) << " (10% chance of breaking)" << endl;
         cout << "3. Cauldron: " << getPartyCookwareAt(2) << " (2% chance of breaking)" << endl;
@@ -1573,7 +1604,7 @@ void Dungeon::normalSpaceCookeat()
             cout << "Please enter 1, 2, or 3." << endl;
             cin >> cw;
         }
-
+        cout << endl;
         if (stoi(cw)==1 && getPartyCookwareAt(0)<=0)
         {
             cout << "You don't have a ceramic pot to use. Please choose another cookware." << endl;
@@ -1588,8 +1619,9 @@ void Dungeon::normalSpaceCookeat()
         }
         else
         {
-            not_pass = false; 
+            not_pass = false;
         }
+        cout << endl;
     }
 
     int cw_index = stoi(cw)-1;
@@ -1598,20 +1630,18 @@ void Dungeon::normalSpaceCookeat()
         bool isBreak = probability(25);
         if (isBreak==true)
         {
-            cout << "NOOOOO! a ceramic pot has broken! You have lost it and you lost " << amount_ing << " kg of ingredients." << endl;
+            cout << "NOOOOO! a ceramic pot has broken! You have lost it and " << amount_ing << " kg of ingredient." << endl;
             setPartyCookwareAt(cw_index, getPartyCookwareAt(cw_index)-1);//losing cookware
             setPartyIngredient(getPartyIngredient()-amount_ing);//losing ingredient
         }
         else
         {
-            cout << "You have successfully cooked " << amount_ing << " kg of ingredients!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
+            cout << "You have successfully cook " << amount_ing << " kg of ingredient!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
             for (int i=0; i< getNumPlayer(); i++)
             {
                 setFullnessAt(i, getFullnessAt(i)+(amount_ing/5));
             }
             setPartyIngredient(getPartyIngredient()-amount_ing);
-            // partyUpdate();
-            // cout << "You have " << getPartyIngredient() << " kg of ingredient left." << endl;
         }
     }
     else if (cw=="2")
@@ -1619,20 +1649,18 @@ void Dungeon::normalSpaceCookeat()
         bool isBreak = probability(10);
         if (isBreak==true)
         {
-            cout << "NOOOOO! a frying has broken! You have lost it and you lost " << amount_ing << " kg of ingredients." << endl;
+            cout << "NOOOOO! a frying has broken! You have lost it and " << amount_ing << " kg of ingredient." << endl;
             setPartyCookwareAt(cw_index, getPartyCookwareAt(cw_index)-1);//losing cookware
             setPartyIngredient(getPartyIngredient()-amount_ing);//losing ingredient
         }
         else
         {
-            cout << "You have successfully cooked " << amount_ing << " kg of ingredients!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
+            cout << "You have successfully cook " << amount_ing << " kg of ingredient!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
             for (int i=0; i< getNumPlayer(); i++)
             {
                 setFullnessAt(i, getFullnessAt(i)+(amount_ing/5));
             }
             setPartyIngredient(getPartyIngredient()-amount_ing);
-            // partyUpdate();
-            // cout << "You have " << getPartyIngredient() << " kg of ingredient left." << endl;
         }
     }
     else if (cw=="3")
@@ -1640,24 +1668,22 @@ void Dungeon::normalSpaceCookeat()
         bool isBreak = probability(2);
         if (isBreak==true)
         {
-            cout << "NOOOOO! a frying has broken! You have lost it and you lost " << amount_ing << " kg of ingredients." << endl;
+            cout << "NOOOOO! a frying has broken! You have lost it and " << amount_ing << " kg of ingredient." << endl;
             setPartyCookwareAt(cw_index, getPartyCookwareAt(cw_index)-1);//losing cookware
             setPartyIngredient(getPartyIngredient()-amount_ing);//losing ingredient
         }
         else
         {
-            cout << "You have successfully cooked " << amount_ing << " kg of ingredients!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
+            cout << "You have successfully cook " << amount_ing << " kg of ingredient!" << endl << "everyone's fullness has increased by " << amount_ing/5 << endl;
             for (int i=0; i< getNumPlayer(); i++)
             {
                 setFullnessAt(i, getFullnessAt(i)+(amount_ing/5));
             }
             setPartyIngredient(getPartyIngredient()-amount_ing);
-            // partyUpdate();
-            // cout << "You have " << getPartyIngredient() << " kg of ingredient left." << endl;
         }
     }
     partyUpdate();
-    cout << "You have " << getPartyIngredient() << " kg of ingredients left." << endl;
+    cout << "You have " << getPartyIngredient() << " kg of ingredient left." << endl;
     cout << endl;
     return;
 }
@@ -1673,22 +1699,22 @@ Algorithm will determine if party can fight mosnter, if so, will calculate if th
 8. each player will also have a 50% chance of losing fullness by 1
 9. if player dies, armor and weapon will be updated
 */
-void Dungeon::normalSpacePickfight() 
+void Dungeon::normalSpacePickfight()
 {
     //validation check for the number of weapon and armor
     if (!(getNumWeapon()>0 && getPartyArmor() >0))
     {
         if (getNumWeapon()==0 && getPartyArmor()>0)
         {
-            cout << "You don't have any weapons to fight a monster." << endl;
+            cout << "You don't have any weapon to fight a monster." << endl;
         }
         else if (getNumWeapon()>0 && getPartyArmor()==0)
         {
-            cout << "You don't have any armor to protect your team fighting the monster." << endl;
+            cout << "You don't have any armor to protect your team fighting a monster." << endl;
         }
         else if (getNumWeapon()==0 && getPartyArmor()==0)
         {
-            cout << "You don't have any weapons or armor to fight the monster." << endl;
+            cout << "You don't have amy weapon and armor to fight a monster." << endl;
         }
         cout << "Please choose another option!" << endl;
         cout << endl;
@@ -1721,27 +1747,30 @@ void Dungeon::normalSpacePickfight()
     //fighting calculation
     int w = getNumWeapon() + getPartyWeaponAt(2) + 2*(getPartyWeaponAt(3)) + 3*(getPartyWeaponAt(4));
     int d=0;
-    int r1 = rand()%6 + 1; //1-6
+    int r1 = rand()%6 + 1; 
     int r2 = rand()%6 + 1;
     int c = mon_level;
     int a = getPartyArmor();
 
-    //caldulating d is a problem (not sure if below code will correct -> logically)
     bool unique_weapon = true;
     for (int i=0; i<5; i++) //max num of weapon type = 5. Depending on the number of player 5 players have 5 different weapons, similary, 3 players must have 3 different weapons
     {//meaning that the number of weapon for each type has to be one for the party to have unique weapon
         if (getPartyWeaponAt(i) >1)
         {
             unique_weapon = false;
-            break; //will this break out of the for loop
+            break;
         }
     }
-    if (unique_weapon==true)
+    if (unique_weapon==true && getNumPlayer()==getNumWeapon())
     {
         d=4;
     }
     //if not it's 0 by the definition (already initialized to 0 at the beginning)
 
+    cout << endl;
+    cout << "The battle has taken place... wait a sec to see the outcome!!!" << endl;
+    cout << endl;
+    sleep(5);
     //outcome condition
     int cal_outcome = ((r1*w)+d)-((r2*c)/a);
     if (cal_outcome>0)
@@ -1750,16 +1779,14 @@ void Dungeon::normalSpacePickfight()
         setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
         setNumDefeatedMonster(getNumDefeatedMonster()+1);
         cout << "You did it!!! You have defeated the monster!!!" << endl;
-        //party_.setGold(party_.getGold()+(10*c));
         setPartyGold(getPartyGold() + (10*c));
-        cout << "You recieved " << 10*c << " gold as a prize!" << " (" << getPartyGold() << " in total)" << endl;
-        //party_.setIngredient(party_.getIngredient())
+        cout << "You recieve " << 10*c << " golds as a prize!" << " (" << getPartyGold() << " in total)" << endl;
         setPartyIngredient(getPartyIngredient() + (5*c));
-        cout << "You recieved " << 5*c << " kg of ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
+        cout << "You recieve " << 5*c << " ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
         bool isKey = probability(10);
         if (isKey==true)
         {
-            cout << "Wait! The monster dropped a key! Lucky you!" << endl;
+            cout << "Wait! The monster dropped the key! Lucky you!" << endl;
             setStatusAt(1, getStatusAt(1)+1); //status[1] = key
             cout << "You currently have " << getStatusAt(1) << " key(s)" << endl;
         }
@@ -1772,16 +1799,16 @@ void Dungeon::normalSpacePickfight()
         //losing gold
         int gold_remained = getPartyGold()*0.75;
         setPartyGold(gold_remained);
-        cout << "You lost some gold " << getPartyGold() << " gold are remain." << endl;
+        cout << "You lost some gold " << getPartyGold() << " golds are remained." << endl;
         //losing ingredient
         if (getPartyIngredient()<=30) //losing ingredient up to 30. This means that having less than 30 will have 0 remained
         {
-            cout << "You have lost all your ingredients." << endl;
+            cout << "You have lost all the ingredient." << endl;
             setPartyIngredient(0);
         }
         else
         {
-            cout << "You have lost 30 kg ingredients" << endl;
+            cout << "You have lost 30 ingredients" << endl;
             setPartyIngredient(getPartyIngredient()-30); //having more than 30 will be substracted by 30
         }
         //losing member
@@ -1816,7 +1843,7 @@ void Dungeon::normalSpacePickfight()
             cout << "Your party's fullness has dropped by one." << endl;
             partyUpdate();
             cout << getNumPlayer() << endl;
-            for (int i=0; i<getNumPlayer(); i++) 
+            for (int i=0; i<getNumPlayer(); i++) //**out of range error
             {
                 if (getFullnessAt(i)>0)
                 {
@@ -1826,11 +1853,13 @@ void Dungeon::normalSpacePickfight()
             cout << endl;
             partyUpdate();
         }
-        removeWeapon(); //always checks after losing player
+        removeWeapon(); //akways checks after losing player
+        removeArmor();
     }
     cout << endl;
     return;
 }
+
 // MERCHANT //
 /*
 Algorithm will show menu of what user can buy or if user wants to sell treasures
@@ -1850,11 +1879,11 @@ void Dungeon::mainMerchant()
         cin >> main;
 
         bool isInputValid = false;
-        while (!isInputValid) 
+        while (!isInputValid)
         {
             while (isInputInteger(main)==false)
             {
-                cout << "Please enter an integer." << endl;
+                cout << "Please enter integer." << endl;
                 cin >> main;
             }
 
@@ -1905,7 +1934,7 @@ void Dungeon::mainMerchant()
 // Algorithm will print out what user can buyor if user wants to sell treasures - user leaves once finished
 void Dungeon::printMerchant()
 {
-    cout << "Let's make some modifications to your party!!! Here are your option! Be prepared for a long journey!!!" << endl;
+    cout << "Let's make some modifications too your party!!! Here are things you can do! Be prepared for a long journey!!!" << endl;
     cout << "1. Ingredients: To make food, you have to cook raw ingredients." << endl;
     cout << "2. Cookware: You will need something to cook those ingredients." << endl;
     cout << "3. Weapons: It's dangerous to go alone, take this!" << endl;
@@ -1926,7 +1955,6 @@ Algorithm will ask user the amount of ingredients desired and will determine if 
 */
 void Dungeon::merchant_ingredient()
 {
-    //setStatusAt(0,4); //setting rooms cleared to be 2 for testing
     int ingredient_price = (getPartyIngredientPrice()*(1+(getStatusAt(0)*0.25))); //getStatusAt(0) gives the number of room cleared
     cout << "I see that you need ingredients! How many kg of ingredients do you need? It's " << ingredient_price << " Gold/kg." << endl;
     cout << "(Enter a positive mulitple of 5, or 0 to cancel)" << endl;
@@ -1936,11 +1964,11 @@ void Dungeon::merchant_ingredient()
     //while making sure that the input is the integer
     //while mnaking sure that the integer is positive multiple of 5
     bool isInputValid = false;
-    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    while (!isInputValid)
     {
         while (isInputInteger(ingre)==false)
         {
-            cout << "Please enter an integer." << endl;
+            cout << "Please enter integer." << endl;
             cin >> ingre;
         }
 
@@ -1959,7 +1987,7 @@ void Dungeon::merchant_ingredient()
     ingre_amount = stoi(ingre); //changing the string into the int
     if (ingre_amount==0)
     {
-        cout << "We are sad that you decided not to buy any ingredients from us. What else can I do for you?" << endl;
+        cout << "We are sad that you decided not to buy any ingredient from us. What else can I get for you?" << endl;
         cout << endl;
         return; //this will be out of the function and start again att the main merchant menu
     }
@@ -1968,8 +1996,8 @@ void Dungeon::merchant_ingredient()
         int cost = ingre_amount*ingredient_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << ingre_amount << " kg of ingredients" << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << ingre_amount << " kg of ingredients" << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -1980,7 +2008,7 @@ void Dungeon::merchant_ingredient()
         if(yesorno(yn))
         {
             setPartyGold((getPartyGold())-cost);
-            setPartyIngredient(getPartyIngredient() + ingre_amount);
+            setPartyIngredient(getPartyIngredient()+ingre_amount);
             cout << endl;
             inventoryUpdate();
         }
@@ -2004,7 +2032,7 @@ void Dungeon::merchant_cookware()
     int pan_price = (getPartyCookwarePriceAt(1)*(1+(getStatusAt(0)*0.25)));
     int cauldron_price = (getPartyCookwarePriceAt(2)*(1+(getStatusAt(0)*0.25)));
 
-    cout << "I have several types of cookware, which one would you like?" << endl << "Each type has a different probability of breaking when used, marked with (XX%)." << endl;
+    cout << "I have a several types of cookware, which one would you like?" << endl << "Each type has a different probability of breaking when used, marked with (XX%)." << endl;
     cout << "Choose on of the following cokwares:" << endl;
     cout << "1. (25%) Ceramic Pot [" << pot_price << " Gold]" << endl;
     cout << "2. (10%) Frying Pan [" << pan_price << " Gold]" << endl;
@@ -2012,9 +2040,9 @@ void Dungeon::merchant_cookware()
     cout << "4. Cancel" << endl;
     string cw_type;
     cin >> cw_type;
-    while (!(cw_type == "1" || cw_type == "2" || cw_type == "3" || cw_type == "4")) //connsider the length becasue it gives error for white space -> does nto work
+    while (!(cw_type == "1" || cw_type == "2" || cw_type == "3" || cw_type == "4"))
     {
-        cout << "Please enter a number between 1-4" << endl;
+        cout << "Please enter number between 1-4" << endl;
         cin >> cw_type;
     }
 
@@ -2032,11 +2060,11 @@ void Dungeon::merchant_cookware()
     cin >> cook;
 
     bool isInputValid = false;
-    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    while (!isInputValid)
     {
         while (isInputInteger(cook)==false)
         {
-            cout << "Please enter an integer. or 0 to cencel" << endl;
+            cout << "Please enter integer. or 0 to cencel" << endl;
             cin >> cook;
         }
 
@@ -2050,23 +2078,21 @@ void Dungeon::merchant_cookware()
             isInputValid = true; //breaking the loop when the input is valid
         }
     }
-
     int cook_amount;
     cook_amount=stoi(cook);
     if(cook_amount==0)
     {
-        cout << "We are sad that you decided not to buy any cookware from us. What else can I do for you?" << endl;
+        cout << "We are sad that you decided not to buy any cookware from us. What else can I get for you?" << endl;
         cout << endl;
         return;
     }
-    
     if (cw_type=="1")
     {
         int cost = cook_amount*pot_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << cook_amount << " Ceremic Pot(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Ceremic Pot(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2088,8 +2114,8 @@ void Dungeon::merchant_cookware()
         int cost = cook_amount*pan_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << cook_amount << " Frying Pan(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Frying Pan(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2111,8 +2137,8 @@ void Dungeon::merchant_cookware()
         int cost = cook_amount*cauldron_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << cook_amount << " Cauldron(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << cook_amount << " Cauldron(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2157,9 +2183,8 @@ void Dungeon::merchant_weapon()
     int axe_price = getPartyWeaponPriceAt(3)*(1+(getStatusAt(0)*0.25));
     int sword_price = getPartyWeaponPriceAt(4)*(1+(getStatusAt(0)*0.25));
     
-    //I was thinking about removing lower level weapons to buy new +1/+2/+3 weapons -> thils whole condition will be hella messy
-    cout << "I have a wide collection of weapons to choose from, what would you like?" << endl << "Note that some of them provide you a special bonus in combat, marked by a (+X)." << endl;
-    cout << "Each player can hold only one weapon! Your party can have up too 5 weapons!" << endl;
+    cout << "I have a plentiful collection of weapons to choose from, what would you like?" << endl << "Note that some of them provide you a special bonus in combat, marked by a (+X)." << endl;
+    cout << "Each player can hold only one weapon! You party can have up too 5 weapons!" << endl;
     cout << "Having unique weapon for each player in your party will increase the chance of winning monsters!!!" << endl; 
     cout << "Choose on of the following weapons:" << endl;
     cout << "1. Stone Club [" << club_price << " Gold]" << endl;
@@ -2172,15 +2197,14 @@ void Dungeon::merchant_weapon()
     cin >> weapon_type;
     while (!(weapon_type == "1" || weapon_type == "2" || weapon_type == "3" || weapon_type == "4" || weapon_type == "5" || weapon_type == "6"))
     {
-        cout << "Please enter a number between 1-6" << endl;
+        cout << "Please enter number between 1-6" << endl;
         cin >> weapon_type;
     }
 
     cout << endl;
     if (weapon_type == "6")
     {
-        cout << "We are sad that you decided not to buy any weapon from us. What else can I do for you?" << endl;
-        //inventoryUpdate();
+        cout << "We are sad that you decided not to buy any weapon from us. What else can I get for you?" << endl;
         cout << endl;
         return;
     }
@@ -2190,11 +2214,11 @@ void Dungeon::merchant_weapon()
     cin >> weapon;
 
     bool isInputValid = false;
-    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    while (!isInputValid)
     {
         while (isInputInteger(weapon)==false)
         {
-            cout << "Please enter an integer. or 0 to cancel" << endl;
+            cout << "Please enter integer. or 0 to cancel" << endl;
             cin >> weapon;
         }
 
@@ -2202,7 +2226,7 @@ void Dungeon::merchant_weapon()
         {
             cout << "Please enter a positive mulitple of 5, or 0 to cancel" << endl;
             cout << "Please enter a positive integer, or 0 to cancel" << endl;
-            cout << "Note that you can only buy up to " << 5-getNumWeapon() << " weapons becasue of limited capacity!" << endl;
+            cout << "Note that you can only buy up to " << 5-getNumWeapon() << "  weapons becasue of limited capacity!" << endl;
             cout << "How many would you like? (Enter a positive integer, or 0 to cancel)" << endl;
             cin >> weapon;
         }
@@ -2216,19 +2240,17 @@ void Dungeon::merchant_weapon()
     weapon_amount = stoi(weapon);
     if(weapon_amount==0)
     {
-        cout << "We are sad that you decided not to buy any weapon from us. What else can I do for you?" << endl;
-        //inventoryUpdate();
+        cout << "We are sad that you decided not to buy any weapon from us. What else can I get for you?" << endl;
         cout << endl;
         return;
     }
-   
     if (weapon_type == "1")
     {
         int cost = weapon_amount*club_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << weapon_amount << " Stone Club(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Stone Club(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2239,7 +2261,6 @@ void Dungeon::merchant_weapon()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyWeaponAt(0, (getPartyWeaponAt(0))+weapon_amount);
-            //inventoryUpdate();
         }
     }
     else if (weapon_type == "2")
@@ -2247,8 +2268,8 @@ void Dungeon::merchant_weapon()
         int cost = weapon_amount*spear_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << weapon_amount << " Iron Spear(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Iron Spear(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2259,7 +2280,6 @@ void Dungeon::merchant_weapon()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyWeaponAt(1,(getPartyWeaponAt(1))+weapon_amount);
-            //inventoryUpdate();
         }
     }
     else if (weapon_type == "3")
@@ -2267,8 +2287,8 @@ void Dungeon::merchant_weapon()
         int cost = weapon_amount*rapier_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << weapon_amount << " Mythril Rapier(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Mythril Rapier(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2279,7 +2299,6 @@ void Dungeon::merchant_weapon()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyWeaponAt(2,(getPartyWeaponAt(2))+weapon_amount);
-            //inventoryUpdate();
         }
     }
     else if (weapon_type == "4")
@@ -2287,8 +2306,8 @@ void Dungeon::merchant_weapon()
         int cost = weapon_amount*axe_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << weapon_amount << " Flaming Battle-Axe(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Flaming Battle-Axe(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2299,7 +2318,6 @@ void Dungeon::merchant_weapon()
         {
             setPartyGold(getPartyGold() - cost);
             setPartyWeaponAt(3,(getPartyWeaponAt(3))+weapon_amount);
-            //inventoryUpdate();
         }
     }
     else if (weapon_type == "5")
@@ -2307,8 +2325,8 @@ void Dungeon::merchant_weapon()
         int cost = weapon_amount*sword_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << weapon_amount << " Vorpal Longsword(s)." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << weapon_amount << " Vorpal Longsword(s)." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2338,19 +2356,18 @@ Algorithm will ask user the number of armor desired and will determine if it's v
 */
 void Dungeon::merchant_armor()
 {
-    //setStatusAt(0,4); //setting rooms cleared to be 2 for testing
     int armor_price = (getPartyArmorPrice()*(1+(getStatusAt(0)*0.25))); //getStatusAt(0) gives the number of room cleared
-    cout << "I see that you need Armor! How many suits of armor can I get you? It's " << armor_price << " Gold/suit." << endl;
+    cout << "I see that you need Armor suit! How many suits of armor can I get you? It's " << armor_price << " Gold/suit." << endl;
     cout << "(Enter a positive integer, or 0 to cancel)" << endl;
     int armor_amount;
     string armor;
     cin >> armor;
     bool isInputValid = false;
-    while (!isInputValid) //this while loop is fucking important!!!!!!!
+    while (!isInputValid)
     {
         while (isInputInteger(armor)==false)
         {
-            cout << "Please enter an integer. or 0 to cancel" << endl;
+            cout << "Please enter integer. or 0 to cancel" << endl;
             cin >> armor;
         }
 
@@ -2380,8 +2397,8 @@ void Dungeon::merchant_armor()
         int cost = armor_amount*armor_price;
         if (cost > getPartyGold())
         {
-            cout << "Sorry! You don't have enough gold for buying " << armor_amount << " armor suits" << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough gold for buying " << armor_amount << " armor suits" << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return; //this will be out of the function and start again att the main merchant menu
         }
@@ -2393,7 +2410,6 @@ void Dungeon::merchant_armor()
         {
             setPartyGold((getPartyGold())-cost);
             setPartyArmor(getPartyArmor()+armor_amount);
-            //inventoryUpdate();
         }
     }
     cout << endl;
@@ -2420,7 +2436,7 @@ void Dungeon::merchant_sell()
     if (num_treasures_total==0)
     {
         cout << "You have no treasures to be sold at the moment. Please come back later!" << endl;
-        cout << "What else can I do for you?" << endl;
+        cout << "What else can I get for you?" << endl;
         cout << endl;
         return;
     }
@@ -2438,7 +2454,7 @@ void Dungeon::merchant_sell()
     cin >> treasure_type;
     while (!(treasure_type=="1" || treasure_type=="2" || treasure_type=="3" || treasure_type=="4" || treasure_type=="5" || treasure_type=="6"))
     {
-        cout << "Please enter a number between 1-6" << endl;
+        cout << "Please enter number between 1-6" << endl;
         cin >> treasure_type;
     }
     cout << endl;
@@ -2454,11 +2470,11 @@ void Dungeon::merchant_sell()
     string treasure;
     cin >> treasure;
     bool isInputValid = false;
-    while (!isInputValid) 
+    while (!isInputValid) //this while loop is fucking important!!!!!!!
     {
         while (isInputInteger(treasure)==false)
         {
-            cout << "Please enter an integer. or 0 to cancel" << endl;
+            cout << "Please enter integer. or 0 to cancel" << endl;
             cin >> treasure;
         }
 
@@ -2485,8 +2501,8 @@ void Dungeon::merchant_sell()
     {
         if (treasure_amount > getPartyTreasureAt(0))
         {
-            cout << "Sorry! You don't have enough Silver ring to be sold." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough Silver ring to be sold." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return;
         }
@@ -2499,6 +2515,7 @@ void Dungeon::merchant_sell()
         {
             setPartyGold(getPartyGold() + cost);
             setPartyTreasureAt(0, (getPartyTreasureAt(0))-treasure_amount);
+            cout << endl;
             inventoryUpdate();
         }
     }
@@ -2506,8 +2523,8 @@ void Dungeon::merchant_sell()
     {
         if (treasure_amount > getPartyTreasureAt(1))
         {
-            cout << "Sorry! You don't have enough Ruby necklace to be sold." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough Ruby necklace to be sold." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return;
         }
@@ -2528,7 +2545,7 @@ void Dungeon::merchant_sell()
     {
         if (treasure_amount > getPartyTreasureAt(2))
         {
-            cout << "Sorry! You don't have enough Emerald bracelet to be sold." << endl;
+            cout << "Sorry!, you don't have enough Emerald bracelet to be sold." << endl;
             cout << "What else can I get you?" << endl;
             cout << endl;
             return;
@@ -2550,8 +2567,8 @@ void Dungeon::merchant_sell()
     {
         if (treasure_amount > getPartyTreasureAt(3))
         {
-            cout << "Sorry! You don't have enough Diamond circlet to be sold." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough Diamond circlet to be sold." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return;
         }
@@ -2572,8 +2589,8 @@ void Dungeon::merchant_sell()
     {
         if (treasure_amount > getPartyTreasureAt(4))
         {
-            cout << "Sorry! You don't have enough Gem-encrusted goblet to be sold." << endl;
-            cout << "What else can I do you?" << endl;
+            cout << "Sorry!, you don't have enough Gem-encrusted goblet to be sold." << endl;
+            cout << "What else can I get you?" << endl;
             cout << endl;
             return;
         }
@@ -2593,6 +2610,7 @@ void Dungeon::merchant_sell()
     cout << endl;
     return;
 }
+
 // NPC //
 /*
 Algorithm will ask user for which action they want
@@ -2600,7 +2618,7 @@ Algorithm will ask user for which action they want
 2. option two is to talk to npc - calls npc speak function
 3. give up function where user quits game
 */
-void Dungeon::mainNPCAction() 
+void Dungeon::mainNPCAction()
 {
     bool loop = true;
     while(loop)
@@ -2652,7 +2670,7 @@ void Dungeon::mainNPCAction()
 // Algorithm will print out user options when they encounter a NPC
 void Dungeon::printNPCAction()
 {
-    cout << "You have faced an NPC in this space!!! Here are things you can do! Let's see what this NPC can give you!!!" << endl;
+    cout << "You have faced NPC in this space!!! Here are things you can do! Let's see what NPC can give you!!!" << endl;
     cout << "1. Move" << endl << "2. Speak to NPC" << endl << "3. Give up" << endl;
     return;
 }
@@ -2670,12 +2688,12 @@ void Dungeon::npc_speak()
     if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == ' ')
     //if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol())) //***have to check this isExplored function because NPC is set to be found when entering the space eventhough haven't talked to them
     {
-        cout << "You have already talked to this NPC! Please choose another option" << endl; 
+        cout << "You have already talked to a NPC! Please choose another option" << endl; 
         cout << endl;
         return;
     }
 
-    cout << "You are interacting with an NPC! Try answering their question correctly and they will be nice to you, otherwise they will summon a monster!!!" << endl;
+    cout << "You are interacting with a NPC! Try answering their question correctly and they will be nice to you, otherwise they will summon a monster!!!" << endl;
     int riddle_index = rand()%getNumRiddle();
     string riddle_ans;
     cout << "Here is the question: " << getRiddleAt(riddle_index).getQuestion() << endl;
@@ -2684,13 +2702,14 @@ void Dungeon::npc_speak()
     cout << endl;
     if(riddle_ans==getRiddleAt(riddle_index).getAnswer())
     {
-        cout << "You got the correct answer! This NPC is willing to offer trading with the merchant!" << endl << "Do you want to buy goods? (y/n)" << endl;
+        cout << "You have got the corrected answer! NPC is willing to offer trading with the merchant!" << endl << "Do you want to buy goods? (y/n)" << endl;
         string yn;
         while (!(yn == "y" || yn == "Y" || yn == "n" || yn == "N"))
         {
             cout << "Please enter 'y' to confirm that you want to trade with merchant, otherwise enter 'n'." << endl;
             cin >> yn;
         }
+        cout << endl;
         if(yn == "y" || yn == "Y")
         {
             mainMerchant();
@@ -2702,7 +2721,7 @@ void Dungeon::npc_speak()
     }
     else
     {
-        cout << "You got the wrong answer! The NPC has become hostile and summoned a monster!!!" << endl;
+        cout << "You have got the wrong answer? NPC has become hostile and summoned a monster!!!" << endl;
         //fighting monster function
         fightingMonster();
     }
@@ -2711,9 +2730,11 @@ void Dungeon::npc_speak()
     setNumRiddle(); // just in case
 
     map_.removeNPC(map_.getPlayerRow(), map_.getPlayerCol());
+    //space will change from an NPC space to a normal space which is marked as "explored".
     cout << endl;
     return;
 }
+
 // ROOM // 
 /*
 Algorithm will ask user for which action they want
@@ -2721,7 +2742,7 @@ Algorithm will ask user for which action they want
 2. option two is to open the door - will promp roomOpen() function
 3. give up function where user quits game
 */
-void Dungeon::mainRoom() 
+void Dungeon::mainRoom()
 {
     bool loop = true;
     while(loop)
@@ -2732,7 +2753,7 @@ void Dungeon::mainRoom()
         while (!(action=="1" || action=="2" || action=="3"))
         {
             printRoomActions();
-            cout << "Please enter a number between 1-3." << endl;
+            cout << "Please enter number between 1-3." << endl;
             cin >> action;
         }
         cout << endl;
@@ -2756,6 +2777,10 @@ void Dungeon::mainRoom()
         else if(action=="2")
         {
             roomOpen();
+            if(isEndgame())
+            {
+                return;
+            }
         }
         else if (action=="3")
         {
@@ -2791,7 +2816,7 @@ void Dungeon::roomOpen()
 {
     if (map_.isRoomLocation(map_.getPlayerRow(), map_.getPlayerCol()) == false)
     {
-        cout << "You have already opened this room!" << endl;
+        cout << "You have already openned this room!" << endl;
         cout << endl;
         return;
     }
@@ -2799,14 +2824,14 @@ void Dungeon::roomOpen()
     bool win_puzzle = false;
     if (getStatusAt(1)==0) //trying to open the room butt does not have the key (if the player has the key this wont run and will go to the 2nd if)
     {
-        cout << "You dont have a key for opening the secret room!" << endl << "You have fallen into the trap!" << endl << "To escape you must complete the puzzle!" << endl;
+        cout << "You dont have a key for openning the secret room!" << endl << "You have fallen into the trap!" << endl << "To escape you must complete the puzzle!" << endl;
         //door puzzle
         cout << endl;
         cout << "The game is Boulder/Parchment/Shears! The rule is Boulder beats Shears / Shears beat Parchment / Parchment beats Boulder." << endl << "If you're lucky yours will beat the door's!!!" << endl;
         bool loop = true;
         while (loop)
         {
-            cout << "To choose, you have to enter: 1. Boulder   2. Shears   3.Parchment" << endl; //number assigned to the name
+            cout << "To choose your guess, you have to enter: 1. Boulder   2. Shears   3.Parchment" << endl; //number assigned to the name
             int door_puzzle = rand()%3 + 1; //1-3
             string player_puzzle;
             cin >> player_puzzle;
@@ -2845,17 +2870,17 @@ void Dungeon::roomOpen()
     {
         if (getNumWeapon()==0 && getPartyArmor()>0)
         {
-            cout << "You don't have any weapons to fight a monster." << endl;
+            cout << "You don't have any weapon to fight a monster in this room." << endl;
         }
         else if (getNumWeapon()>0 && getPartyArmor()==0)
         {
-            cout << "You don't have any armor to protect your team fighting the monster." << endl;
+            cout << "You don't have any armor to protect your team fighting a monster in this room." << endl;
         }
         else if (getNumWeapon()==0 && getPartyArmor()==0)
         {
-            cout << "You don't have any weapons or armor to fight the monster." << endl;
+            cout << "You don't have amy weapon and armor to fight a monster in this room." << endl;
         }
-        cout << "Please choose another option!" << endl;
+        cout << "Please choose another option and come back another time!" << endl;
         cout << endl;
         return;
     }
@@ -2908,7 +2933,7 @@ void Dungeon::roomOpen()
                 break; //will this break out of the for loop
             }
         }
-        if (unique_weapon==true)
+        if (unique_weapon==true && getNumPlayer()==getNumWeapon())
         {
             d=4;
         }
@@ -2922,10 +2947,8 @@ void Dungeon::roomOpen()
             setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
             setNumDefeatedMonster(getNumDefeatedMonster()+1);
             cout << "You did it!!! You have defeated the monster!!!" << endl;
-            //party_.setGold(party_.getGold()+(10*c));
             setPartyGold(getPartyGold() + (10*c));
             cout << "You recieve " << 10*c << " golds as a prize!" << " (" << getPartyGold() << " in total)" << endl;
-            //party_.setIngredient(party_.getIngredient())
             setPartyIngredient(getPartyIngredient() + (5*c));
             cout << "You recieve " << 5*c << " ingredients as a prize!" << " (" << getPartyIngredient() << " in total)" << endl;
             bool isKey = probability(10);
@@ -2944,7 +2967,6 @@ void Dungeon::roomOpen()
         else
         {//losing the monster
             //removeMonsterAt(mon_index); -> not removing bc did not win
-            //setNumMonster(); //updating just in case (it will set it by getting the length of vector of monsters)
             //NOTE not adding number of defeated monstes
             cout << "The monster is too strong! You've lost the fight." << endl;
             //losing gold
@@ -2989,8 +3011,7 @@ void Dungeon::roomOpen()
                     }
                 }
             }
-            //removePlayer(); //not die by hunger -> removing the player right away
-            
+        
             //40% chance misfortune occur
             bool isMisfortune = probability(40);
             if (isMisfortune==true)
@@ -3019,6 +3040,7 @@ void Dungeon::roomOpen()
     cout << endl;
     return;
 }
+
 // MISFORTUNE // 
 /*
 Algorithm is for musfortunes for rooms which will determine whether party will lose armor/weapon, have ingredients.cookware stolen, 
@@ -3029,7 +3051,7 @@ or if teammate will get food poisoning, or player will get stuck in room
 4. 30% chance a teammate will get stuck in previous room
 5. if there are less tahn 2 players, team loses
 */
-void Dungeon::misfortuneRoom() 
+void Dungeon::misfortuneRoom()
 {
     int random = rand()%10+1;
     if (random == 1) //losing random weapon or armor
@@ -3040,7 +3062,7 @@ void Dungeon::misfortuneRoom()
         {
             if (getNumWeapon()==0) //no weapon
             {
-                cout << "Good for you, you have no weapons to be broken!" << endl;
+                cout << "Good for you, you have no weapon to be broken!" << endl;
                 return;
             }
             //use the while loop to random the index of weapon to find the one that is not 0
@@ -3084,7 +3106,7 @@ void Dungeon::misfortuneRoom()
                     cout << "Good for you! You have no armor to be broken!" << endl;
                     return;
                 }
-                cout << "OH NO! Your armor broke!" << endl;
+                cout << "OH NO! Your Armoe broke!" << endl;
                 setPartyArmor(getPartyArmor()-1);
             }   
     }
@@ -3094,19 +3116,19 @@ void Dungeon::misfortuneRoom()
         {
             if (getPartyIngredient()==0)
             {
-                cout << "Good for you! You have no ingredients to be stolen!" << endl;
+                cout << "Good for you! You have no ingredient to be stolen!" << endl;
                 return;
             }
             else if (getPartyIngredient()<=10)
             {
                 cout << "OH NO! Your team was robbed by dungeon bandits!" << endl;
-                cout << "Your " << getPartyIngredient() << " kg of ingredients got stolen!" << endl;
+                cout << "Your " << getPartyIngredient() << " kg of ingredient got stolen!" << endl;
                 setPartyIngredient(0);
             }
             else if (getPartyIngredient()>10)  
             {
                 cout << "OH NO! Your team was robbed by dungeon bandits!" << endl;
-                cout << "Your 10 kg of ingredients got stolen!" << endl;
+                cout << "Your 10 kg of ingredient got stolen!" << endl;
                 setPartyIngredient(getPartyIngredient()-10);
             }
         }
@@ -3162,7 +3184,7 @@ void Dungeon::misfortuneRoom()
         {
             if (player_index!=0) //not the leader
             {
-                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and died from food poisoning!!" << endl;
+                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
                 members_.erase(members_.begin()+player_index);
                 removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
@@ -3170,17 +3192,16 @@ void Dungeon::misfortuneRoom()
             }
             else
             {
-                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0 due to food poisoning!! The game is over!" << endl;
+                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
                 setFullnessAt(0,0);
                 setGiveup(true);
                 return;
             }
-            //setFullnessAt(player_index, 0);
         }
         else if (getFullnessAt(player_index)>10)
         {
             setFullnessAt(player_index, getFullnessAt(player_index)-10);
-            cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << " due to food poisoning" << endl;
+            cout << "There is a food poisoning! "<< getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << ". (because of the misfortune)" << endl;
         }
     }
     else if (random>7 && random<11) //8,9,10
@@ -3207,14 +3228,14 @@ void Dungeon::misfortuneRoom()
     return;
 }
 /*
-Algorithm is for musfortunes for rooms which will determine whether party will lose armor/weapon, have ingredients.cookware stolen, 
+Algorithm is for musfortunes for Normal move action which will determine whether party will lose armor/weapon, have ingredients.cookware stolen, 
 or if teammate will get food poisoning
 1. 10% chance party will lost weapon/armor
 2. 30% chance party will lost ingredients
 3. 30% chance a teammate will get food poisoning - if teammate fullness is less than or equal to 10, they die
 5. if there are less tahn 2 players, team loses
 */
-void Dungeon::misfortuneNormal() //done but not tested
+void Dungeon::misfortuneNormal()
 {
     int random = rand()%10+1;
     if (random == 1) //losing random weapon or armor
@@ -3225,12 +3246,12 @@ void Dungeon::misfortuneNormal() //done but not tested
         {
             if (getNumWeapon()==0) //no weapon
             {
-                cout << "Good for you, you have no weapons to be broken!" << endl;
+                cout << "Good for you, you have no weapon to be broken!" << endl;
                 return;
             }
             //use the while loop to random the index of weapon to find the one that is not 0
             bool weapon_found = false;
-            int weapon_index =0; //giving the initial value does not matter (be cause this loop will always find one, this is the case that num_weapon is not zero)
+            int weapon_index =0; //ginvign the initial value does not matter (be cause this loop will always find one, this is the case that num_weapon is not zero)
             while (!weapon_found) //while it's true (weapon_not found yet)
             {
                 int index_rand = rand()%5; //0-4
@@ -3269,7 +3290,7 @@ void Dungeon::misfortuneNormal() //done but not tested
                     cout << "Good for you! You have no armor to be broken!" << endl;
                     return;
                 }
-                cout << "OH NO! Your armor broke!" << endl;
+                cout << "OH NO! Your Armoe broke!" << endl;
                 setPartyArmor(getPartyArmor()-1);
             }   
     }
@@ -3351,11 +3372,11 @@ void Dungeon::misfortuneNormal() //done but not tested
                 removeWeapon();
                 setNumPlayer(); //just in case that of using getNumPlayer later
                 removeArmor();
-                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and died from food poisoning!!" << endl;
+                cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to 0 and die from hunger. (because of the misfortune)" << endl;
             }
             else
             {
-                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0 due to food poisoning!! The game is over!" << endl;
+                cout << "The leader " << getPlayerAt(0).getName() << "'s fullness has dropped to 0. The game is over!" << endl;
                 setFullnessAt(0, 0);
                 setGiveup(true);
                 return;
@@ -3365,12 +3386,13 @@ void Dungeon::misfortuneNormal() //done but not tested
         else if (getFullnessAt(player_index)>10)
         {
             setFullnessAt(player_index, getFullnessAt(player_index)-10);
-            cout << getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << " due to food poisoning!!" << endl;
+            cout << "There is a food poisoning! "<< getPlayerAt(player_index).getName() << "'s fullness has dropped to " << getFullnessAt(player_index) << ". (because of the misfortune)" << endl;
         }
     }
     return;
 }
-// MAIN AND END GAME
+
+// MAIN AND END GAME //
 /*
 Algorithm will start the game!
 1. While loop that continues until endGame is true
@@ -3395,27 +3417,24 @@ void Dungeon::mainGame()
         }
         
         if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == ' ')
-        //if (map_.isExplored(map_.getPlayerRow(), map_.getPlayerCol()))
         {
             cout << "You have entered an explored space." << endl;
         }
         else if(map_.isFreeSpace(map_.getPlayerRow(), map_.getPlayerCol())) //player's position == normal space (free space)
-        {//CONDITION WORK
+        {
             cout << "You've enter a free space." << endl;
             mainNormalSpace();
         }
         else if(map_.isRoomLocation(map_.getPlayerRow(), map_.getPlayerCol())) // player's position == room
-        {//CONDITION WORKS
-            //cout << "You have found a room" << endl;
+        {
             mainRoom();
         }
         else if (map_.getMapdata(map_.getPlayerRow(), map_.getPlayerCol()) == 'N')
-        //else if (map_.isNPCLocation(map_.getPlayerRow(), map_.getPlayerCol())) // player's position = NPC space
-        { //this statement does not work when entering NPC because MOVE function from the map will set NPC space = explored space and 
-            cout << "You have found a  NPC" << endl;
+        {
+            cout << "You have found a NPC" << endl;
             mainNPCAction();
         }
-        else if(map_.isDungeonExit(map_.getPlayerRow(), map_.getPlayerCol())) //CONDITION WORKS
+        else if(map_.isDungeonExit(map_.getPlayerRow(), map_.getPlayerCol()))
         {
             cout << "You have found the Dungeon exist" << endl;
             return;
@@ -3477,7 +3496,7 @@ Algorithm will end game and show status of what user has achieved in the game
 2. will print the final status such as gold, treasues, rooms clear, monsters defeated, players remaning, 
 and turns taken
 */
-void Dungeon::endGame() ////almost done but not tested
+void Dungeon::endGame()
 {
     cout << "THE JOURNEY HAS ENDED!!!" << endl;
     if (getStatusAt(0)==5 && getNumPlayer()>1 && (map_.getPlayerCol()==map_.getDungeonExitCol() && map_.getPlayerRow()==map_.getDungeonExitRow())) //winning condition
@@ -3486,20 +3505,22 @@ void Dungeon::endGame() ////almost done but not tested
     }
     else
     {
-        cout << "You are now lost in the dungeon forever! No light will ever shine upon you for all eternity!" << endl;
+        cout << "You have lost in the dungeon forever! No light will ever shine upon you for the eternity!" << endl;
     }
-
+    cout << endl;
+    cout << "Here is you final status!" << endl;
+    cout << endl;
+    //name of the leader + remaining members
     partyUpdate();
+    cout << endl;
     //number of rooms cleared
     cout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    cout << "The amount of Gold remaining: " << getPartyGold() << endl;
+    cout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
     cout << "The treasures currently collected and held: ";
     for (int i=0; i<5; i++)
     {
-        // if(getPartyTreasureAt(i)!=0)
-        // {
             if (i==0)
             {
                 cout << "Silver Ring - " << getPartyTreasureAt(0) << " | ";
@@ -3520,7 +3541,6 @@ void Dungeon::endGame() ////almost done but not tested
             {
                 cout << "Gem-encrusted goblet - " << getPartyTreasureAt(4) << " | ";
             }
-        // }
     }
     cout << endl;
 
@@ -3543,7 +3563,7 @@ Algorithm will calculate the score that the user gets when game is over
 4. plus 300 point if finding the dungeon exist
 5. return result
 */
-double Dungeon::scoreCalculation() 
+double Dungeon::scoreCalculation()
 {
     int room_cleared = getStatusAt(0);
 
@@ -3599,7 +3619,7 @@ Algorithm will write the stats into stats.txt when game has ended
 and number of turns taken
 4. close file when done writing all stats in file
 */
-void Dungeon::saveStats() 
+void Dungeon::saveStats() //tested
 {
     ofstream fout;
     string filename = "stats.txt";
@@ -3612,7 +3632,7 @@ void Dungeon::saveStats()
     //number of rooms cleared
     fout << "The number of cleared room: " << getStatusAt(0) << endl;
     //gold pieces remaining
-    fout << "The amount of Gold remaining: " << getPartyGold() << endl;
+    fout << "The amount of remained Gold pieces: " << getPartyGold() << endl;
     //treasure items (using loop to print only the one that does not have 0 amount)
     fout << "The treasures currently collected and held: ";
     for (int i=0; i<5; i++)
@@ -3669,13 +3689,14 @@ void Dungeon::saveScore()
     fout.close();
     return;
 }
-/*
-Algorithm will print out the score board from score.txt file
-1. open the file score.txt
-2. loop through each line while using split function used to get each line of each name and score
-3. store into an temp array that will then we stored in vector
-4. Score will be organized from highest to lowest
-5. loop through vector to print out scoreboard
+/* ALgorithm will open the file of score.txt
+1. will open the score.txt
+2. read each line contaning name of player and their score
+3. will split the name and score by delimeter ':'
+4. name will be stored into the 0 index of temporary string and score will be stored into the 1 index of the temporary string
+5. each temporary array will be put into the vector<string> while being sorted at the same time (1 index of each array in the vector will be compared)
+6. temporary array will mve through the vector until finding the one that have lower score, then array will be pushed back in front of it
+7. after done reading all the line, it will print out the name and score fro mthe highest to smallest (score has to be more than 0)
 */
 void Dungeon::scoreBoard()
 {
